@@ -1,0 +1,42 @@
+# Eval framework artifacts
+prompt-evals/*/.bak-archive/
+.bak-archive/
+
+# Stan deployment - transient outbox (the per-eval working dir, wiped between evals)
+# Track .gitkeep so the folder survives, ignore everything else.
+outbox/*
+!outbox/.gitkeep
+
+# Stan deployment - gitignored return-channel config (Telegram token + chat id)
+config/return-channel.env
+
+# Stan deployment - scratch
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Env / secrets
+.env
+.env.*
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# local-only private needles for the pre-push guard
+.preflight-needles

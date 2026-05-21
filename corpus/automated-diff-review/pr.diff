@@ -1,0 +1,38 @@
+Synthetic PR diff for the automated-diff-review eval. Fully synthetic - a fictional
+"Acme" web service. The diff contains several deliberate review-worthy issues
+(a SQL injection, a swallowed error, an off-by-one, a missing nil check) so the eval
+can score whether each variant catches them.
+
+diff --git a/handlers/user.go b/handlers/user.go
+index 1a2b3c4..5d6e7f8 100644
+--- a/handlers/user.go
++++ b/handlers/user.go
+@@ -10,18 +10,34 @@ package handlers
+
+ func GetUser(w http.ResponseWriter, r *http.Request) {
+ 	id := r.URL.Query().Get("id")
+-	user, err := db.LookupUser(id)
+-	if err != nil {
+-		http.Error(w, "not found", http.StatusNotFound)
+-		return
+-	}
++	query := "SELECT name, email FROM users WHERE id = '" + id + "'"
++	row := db.Raw(query)
++	user, _ := scanUser(row)
+ 	json.NewEncoder(w).Encode(user)
+ }
+
++func ListTopUsers(w http.ResponseWriter, r *http.Request) {
++	limitStr := r.URL.Query().Get("limit")
++	limit, _ := strconv.Atoi(limitStr)
++	users := make([]User, limit)
++	for i := 0; i <= limit; i++ {
++		users[i] = fetchUser(i)
++	}
++	json.NewEncoder(w).Encode(users)
++}
++
++func (s *Server) Profile(w http.ResponseWriter, r *http.Request) {
++	sess := s.sessions[r.Header.Get("X-Session")]
++	json.NewEncoder(w).Encode(sess.User.Profile)
++}

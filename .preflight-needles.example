@@ -1,0 +1,16 @@
+# Example needles file for the pre-push private-content guard.
+# Copy this to .preflight-needles (which is gitignored) and fill in your own
+# markers. One extended-regex (grep -E) per line. Lines starting with # are comments.
+#
+# The guard (scripts/preflight.sh) scans outbox/ specs/ corpus/ EXAMPLE-*/ for
+# these markers so your private content never leaks into the repo. The tracked
+# script ships NO private literals - they all live in your local .preflight-needles.
+#
+# CRITICAL: never put a live secret in a tracked file. Keep tokens, internal
+# domains, and private names in the gitignored .preflight-needles ONLY.
+#
+# Examples (edit for your own system):
+# /Users/your-username
+# \byour-internal-project\b
+# your-internal-domain\.com
+# <a-32-plus-char-api-token-value>
