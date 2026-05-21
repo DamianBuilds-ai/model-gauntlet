@@ -65,12 +65,23 @@ Check whether `config/return-channel.env` exists.
   !bash scripts/setup-return-channel.sh
   ```
   It asks ONLY for a Telegram bot token + chat id, and offers "press ENTER to skip
-  = git-only mode". It writes the gitignored `config/return-channel.env` (chmod 600)
-  and NEVER asks again. Whether Stan supplies Telegram or skips, the run proceeds -
-  git push is always the source of truth; Telegram is a best-effort heads-up.
+  = git-push mode". It writes the gitignored `config/return-channel.env` (chmod 600)
+  and NEVER asks again.
 
-Do not ask any other setup questions, ever. After the first run this step is a
-silent no-op.
+**The token answer selects the delivery mode** (this is the key fork):
+
+- **Token + chat id supplied -> Telegram-document mode.** Each eval's result files
+  are SENT to that Telegram chat as documents (`sendDocument`) the moment the eval
+  finishes. There is NO git push and NO git auth needed at all - Telegram IS the
+  delivery channel and the source of truth. Stan does not need GitHub access in this
+  mode.
+- **ENTER to skip (no token) -> git-push mode.** Results push to a `run/<timestamp>`
+  branch (the original path). This needs git/GitHub push access.
+
+The token + chat id are RUNTIME-ONLY: they live in the gitignored
+`config/return-channel.env` and are NEVER committed. Do not ask any other setup
+questions, ever. After the first run this step is a silent no-op, and the saved
+config alone decides the mode on every later run.
 
 ### 3. Preflight
 
@@ -96,9 +107,13 @@ run, WARN Stan in plain English - "the previous run did not finish shipping (fil
 left in outbox/). Re-run to resume, or clear outbox/ first." A resumed run skips
 evals already marked `done` in STAN_STATE (step 8), so resuming is safe.
 
-### 5. Create the run branch (ONCE per run)
+### 5. Create the run branch (ONCE per run, git-push mode only)
 
-Create a single run branch for the whole batch:
+**Telegram-document mode:** skip this step - there is no branch. Use the literal
+string `run/telegram` as the "run branch" argument when calling `send-eval.sh`
+(the script ignores it in Telegram mode). Jump to step 6.
+
+**git-push mode:** create a single run branch for the whole batch:
 ```
 !git checkout -b "run/$(date -u +%Y%m%dT%H%M%SZ)"
 ```
@@ -123,9 +138,16 @@ write ONLY `outbox/NN-slug.tally.md` and `outbox/NN-slug.scores.md`.
 ```
 !bash scripts/send-eval.sh <NN-slug> <run-branch>
 ```
-This commits ONLY that eval's two files to the run branch, pushes (retry-safe), and
-Telegram-notifies if configured. The run branch accumulates this eval on top of any
-already shipped in the batch.
+`send-eval.sh` auto-selects the delivery mode from `config/return-channel.env`:
+
+- **Telegram-document mode** (token + chat id present): it sends this eval's result
+  files to the Telegram chat as documents via `sendDocument`. No git push, no git
+  auth. Pass `run/telegram` as `<run-branch>` (it is ignored in this mode).
+- **git-push mode** (no token): it commits ONLY that eval's two files to the run
+  branch and pushes (retry-safe). The run branch accumulates this eval on top of any
+  already shipped in the batch.
+
+Either way the result is delivered the moment the eval finishes.
 
 **c. Update STAN_STATE.md.** Mark the slug `done` in the Eval queue, add a row to
 Completed (slug | run branch | date sent | quality winner | practical winner -
@@ -137,13 +159,15 @@ and `outbox/NN-slug.scores.md` locally:
 ```
 !rm -f outbox/<NN-slug>.tally.md outbox/<NN-slug>.scores.md
 ```
-The just-pushed copies remain on the remote run branch (the local deletion stays
-unstaged, so the branch keeps them). The local outbox returns toward clean. Variant
-scratch + sealed key were always in sub-agent scratch and were never in outbox.
+The delivered copies are safe: in git-push mode they live on the remote run branch
+(the local deletion stays unstaged, so the branch keeps them); in Telegram-document
+mode they were already sent to the chat as documents. Either way the local outbox
+returns toward clean. Variant scratch + sealed key were always in sub-agent scratch
+and were never in outbox.
 
 **e. Next eval.** Repeat a through d for the next slug in the batch.
 
-### 7. Run end - reap children, print the branch
+### 7. Run end - reap children, print the result
 
 After the last eval ships:
 
@@ -151,12 +175,20 @@ After the last eval ships:
   processes). The shell scripts each carry their own `trap ... kill $(jobs -p) EXIT`;
   the orchestrator additionally confirms no background jobs remain before declaring
   the run complete.
-- Append a line to STAN_STATE Run history: `run/<timestamp>` + eval count + date.
-- Print the run branch name plainly for Stan, e.g.:
-  ```
-  Run complete. 5 evals shipped on branch: run/20260521T143000Z
-  Copy that branch name and send it to Damian. Done.
-  ```
+- Append a line to STAN_STATE Run history (`run/<timestamp>` or `telegram` + eval
+  count + date).
+- Print the result plainly for Stan:
+  - **git-push mode:** the run branch name, e.g.
+    ```
+    Run complete. 5 evals shipped on branch: run/20260521T143000Z
+    Copy that branch name and send it to Damian. Done.
+    ```
+  - **Telegram-document mode:** there is no branch - the result files already
+    arrived in the Telegram chat, e.g.
+    ```
+    Run complete. 5 evals delivered to the Telegram chat as documents. Done.
+    Nothing to copy - Damian has the results in Telegram.
+    ```
 
 ### 8. Resumability
 
@@ -232,8 +264,13 @@ a run is in progress from outside the orchestrator - that races the run.
 /eval-run
 ```
 On the first run only, Stan answers one question (Telegram token + chat id, or
-ENTER to skip). Every run after is zero-question. When it finishes, Stan copies the
-printed `run/<timestamp>` branch name and sends that one line to Damian.
+ENTER to skip). That one answer picks the delivery mode for good:
+- **Token given:** results arrive in the Telegram chat as documents. Nothing to copy
+  back - Damian already has them. No GitHub access needed.
+- **Skipped:** results push to a `run/<timestamp>` branch; Stan copies that printed
+  branch name and sends that one line to Damian.
+
+Every run after is zero-question.
 
 ---
 
@@ -249,16 +286,24 @@ is a fallback only - the normal path ships each eval as it finishes, so outbox/ 
 usually empty or holds at most one in-flight eval. Prefer simply re-running
 `/eval-run` (resumable) over the manual flush unless the orchestrator cannot start.
 
+Note: `send-and-clean.sh` is a git-push-mode flush. In Telegram-document mode there
+is no branch to flush to - just re-run `/eval-run`, which re-sends any not-yet-`done`
+evals as Telegram documents.
+
 ---
 
 ## Constraints
 
 - NO em dashes anywhere (use spaced hyphens or en-dashes).
 - NO emojis.
-- NEVER push to master. Run branches (`run/<timestamp>`) only.
-- `git add` SPECIFIC files in the per-eval send (handled by send-eval.sh), never
+- Two delivery modes, picked by `config/return-channel.env`: Telegram-document
+  (token present, zero git) or git-push (no token).
+- In git-push mode: NEVER push to master - run branches (`run/<timestamp>`) only.
+  `git add` SPECIFIC files in the per-eval send (handled by send-eval.sh), never
   `git add outbox/` wholesale - that mechanic is what lets the run branch accumulate
   all evals while the local outbox returns to clean between evals.
+- NEVER hardcode or commit the Telegram bot token or chat id. They are runtime-only,
+  loaded from the gitignored `config/return-channel.env`.
 - Sequential batch processing. One eval fully done (run, ship, record, wipe) before
   the next.
 - All sub-agents use the universal output envelope.
@@ -272,8 +317,11 @@ usually empty or holds at most one in-flight eval. Prefer simply re-running
 - `commands/eval-pit.md` - the single-eval four-phase runner this orchestrator wraps.
 - `STAN_STATE.md` - the framework memory trunk read at run start, updated after each eval.
 - `rubric/rubric.md` - the frozen scoring contract.
-- `scripts/send-eval.sh` - per-eval incremental send.
+- `scripts/send-eval.sh` - per-eval incremental send; auto-selects Telegram-document
+  or git-push mode from `config/return-channel.env`.
+- `scripts/send-telegram-doc.sh` - Telegram-document delivery (sends each result file
+  to the chat as a document via `sendDocument`; zero git, zero auth).
 - `scripts/preflight.sh` - corpus + private-content gate.
 - `scripts/setup-return-channel.sh` - one-time return-channel setup.
-- `scripts/send-and-clean.sh` - recovery flush (fallback only).
+- `scripts/send-and-clean.sh` - git-push-mode recovery flush (fallback only).
 - `docs/starting-prompt.md` - the paste-and-go bootstrap for Stan.
