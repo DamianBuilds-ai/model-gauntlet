@@ -84,7 +84,10 @@ fi
 if [ "${#SCAN_DIRS[@]}" -eq 0 ]; then
   echo "  (no outbox/specs/corpus dirs present yet - nothing to scan)"
 else
-  for pat in "${PATTERNS[@]}"; do
+  # bash 3.2 (the macOS default /bin/bash) throws "unbound variable" on "${arr[@]}"
+  # when the array is empty under set -u; the [@]+ form expands to nothing safely so a
+  # fresh clone with no .preflight-needles is the intended no-op. Do not simplify this.
+  for pat in "${PATTERNS[@]+"${PATTERNS[@]}"}"; do
     # --include limits to text-ish files; .gitkeep and binaries are skipped by -I.
     # We grep recursively, print file:line, and treat ANY hit as a failure.
     HITS="$(grep -RInE -- "$pat" "${SCAN_DIRS[@]}" 2>/dev/null || true)"
