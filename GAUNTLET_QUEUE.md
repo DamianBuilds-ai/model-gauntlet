@@ -68,14 +68,14 @@ One row per eval the framework can run. `status` is one of: `queued` (not yet ru
 | 35 | 35-heavy-translation | heavy-translation | corpus/heavy-translation/ | queued |
 | 36 | 36-heavy-classification | heavy-classification | corpus/heavy-classification/ | queued |
 
-<!-- Seeded by the EXAMPLE-eval + queue dispatch (2026-05-21). Each row points at a
-     spec file in specs/NN-slug.md and a corpus path under corpus/. Minimum batch
-     size for a run is 5 - the queue holds 24 queued evals. Spec 01 is the priority
-     probe (the 40-thread scale-cranked consolidation eval). Specs 02 and 03 are
-     higher-N reruns (N=3) of stable task types to crush the within-model noise
-     floor. Specs 04 through 07 are new task types. The static teaching reference
-     for the shape of a completed eval lives at EXAMPLE-multi-file-synthesis/ and is
-     NOT a run target. -->
+<!-- Each row points at a spec file in specs/NN-slug.md and a corpus path under
+     corpus/. Minimum batch size for a run is 5; the rows below are the live queue
+     (run the queued ones in order). Spec 01 is the priority probe (the 40-thread
+     scale-cranked consolidation eval); specs 02 and 03 are higher-N reruns to crush
+     the within-model noise floor; the remaining specs span a broad range of task
+     types (extraction, retrieval, code-gen, reasoning, heavy multi-doc, and more).
+     The static teaching reference for the shape of a completed eval lives at
+     EXAMPLE-multi-file-synthesis/ and is NOT a run target. -->
 
 ---
 
