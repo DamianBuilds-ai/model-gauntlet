@@ -91,6 +91,44 @@ One row per eval the framework can run. `status` is one of: `queued` (not yet ru
 | 58 | 58-format-conversion-xl | format-conversion | corpus/format-conversion-xl/ | queued |
 | 59 | 59-planning-decomposition-at-scale | planning-decomposition | corpus/planning-decomposition-at-scale/ | queued |
 | 60 | 60-multi-turn-coherence | multi-turn-coherence | corpus/multi-turn-coherence/ | queued |
+| 61 | 61-regression-risk-enumeration | regression-risk-enumeration | corpus/regression-risk-enumeration/ | queued (pool 15) |
+| 62 | 62-security-surface-enumeration | security-surface-enumeration | corpus/security-surface-enumeration/ | queued (pool 15) |
+| 63 | 63-edge-case-enumeration | edge-case-enumeration | corpus/edge-case-enumeration/ | queued (pool 15) |
+| 64 | 64-migration-step-completeness | migration-step-completeness | corpus/migration-step-completeness/ | queued (pool 15) |
+| 65 | 65-api-contract-change-completeness | api-contract-change-completeness | corpus/api-contract-change-completeness/ | queued (pool 15) |
+| 66 | 66-config-drift-detection | config-drift-detection | corpus/config-drift-detection/ | queued (pool 15) |
+| 67 | 67-cross-doc-contradiction-at-scale | cross-doc-contradiction-at-scale | corpus/cross-doc-contradiction-at-scale/ | queued (pool 15) |
+| 68 | 68-dependency-graph-completeness | dependency-graph-completeness | corpus/dependency-graph-completeness/ | queued (pool 15) |
+| 69 | 69-test-coverage-gap-detection | test-coverage-gap-detection | corpus/test-coverage-gap-detection/ | queued (pool 15) |
+| 70 | 70-refactor-blast-radius-enumeration | refactor-blast-radius-enumeration | corpus/refactor-blast-radius-enumeration/ | queued (pool 15) |
+| 71 | 71-agentic-debug-loop | agentic-debug-loop | corpus/agentic-debug-loop/ | queued |
+| 72 | 72-multi-tool-orchestration | multi-tool-orchestration | corpus/multi-tool-orchestration/ | queued |
+| 75 | 75-200k-context-needle-synthesis | long-context-needle-synthesis | corpus/200k-context-needle-synthesis/ | queued |
+| 76 | 76-200k-cross-file-refactor | long-context-cross-file-refactor | corpus/200k-cross-file-refactor/ | queued |
+| 77 | 77-long-context-summarization-fidelity | long-context-summarization-fidelity | corpus/long-context-summarization-fidelity/ | queued |
+| 78 | 78-tool-error-recovery | tool-error-recovery | corpus/tool-error-recovery/ | queued |
+| 79 | 79-multi-turn-agentic-coherence | multi-turn-agentic-coherence | corpus/multi-turn-agentic-coherence/ | queued |
+| 80 | 80-plan-then-execute-agentic | plan-then-execute-agentic | corpus/plan-then-execute-agentic/ | queued |
+| 81 | 81-queue-file-update-synthesis | queue-file-update-synthesis | corpus/queue-file-update-synthesis/ | queued |
+| 82 | 82-handoff-doc-synthesis | handoff-doc-synthesis | corpus/handoff-doc-synthesis/ | queued |
+| 83 | 83-leaf-extraction | leaf-extraction | corpus/leaf-extraction/ | queued |
+| 84 | 84-adr-authoring | adr-authoring | corpus/adr-authoring/ | queued |
+| 85 | 85-cross-domain-kb-write | cross-domain-kb-write | corpus/cross-domain-kb-write/ | queued |
+| 86 | 86-scout-summary-synthesis | scout-summary-synthesis | corpus/scout-summary-synthesis/ | queued |
+| 87 | 87-session-wrap-protocol-execution | session-wrap-protocol-execution | corpus/session-wrap-protocol-execution/ | queued |
+| 88 | 88-voice-stable-drafting | voice-stable-drafting | corpus/voice-stable-drafting/ | queued |
+| 89 | 89-workflow-automation-reasoning | workflow-automation-reasoning | corpus/workflow-automation-reasoning/ | queued |
+| 90 | 90-multi-doc-dedup | multi-doc-dedup | corpus/multi-doc-dedup/ | queued |
+| 91 | 91-forbidden-content-adherence | forbidden-content-adherence | corpus/forbidden-content-adherence/ | queued |
+| 92 | 92-exact-format-compliance | exact-format-compliance | corpus/exact-format-compliance/ | queued |
+| 93 | 93-sealed-label-adherence | sealed-label-adherence | corpus/sealed-label-adherence/ | queued |
+| 94 | 94-hard-length-limit-discipline | hard-length-limit-discipline | corpus/hard-length-limit-discipline/ | queued |
+| 95 | 95-scope-creep-resistance | scope-creep-resistance | corpus/scope-creep-resistance/ | queued |
+| 96 | 96-multi-constraint-simultaneous | multi-constraint-simultaneous | corpus/multi-constraint-simultaneous/ | queued |
+| 97 | 97-rerun-eval25-tie-n5 | cross-reference-completeness-at-scale | corpus/cross-reference-completeness-at-scale/ | queued (pool 15) |
+| 98 | 98-rerun-eval37-consistency-n5 | cross-reference-completeness-consistency | corpus/cross-reference-completeness/ | queued (pool 15) |
+| 99 | 99-rerun-eval52-sonnet-fail-n5 | numerical-accuracy-at-scale | corpus/numerical-accuracy-at-scale/ | queued (pool 15) |
+| 100 | 100-rerun-eval22-opus-niche-n5 | cross-reference-completeness | corpus/cross-reference-completeness/ | queued (pool 15) |
 
 <!-- Each row points at a spec file in specs/NN-slug.md and a corpus path under
      corpus/. Minimum batch size for a run is 5; the rows below are the live queue
@@ -146,6 +184,52 @@ empty it falls back to the first 5 `queued` rows in the Eval queue.
 22. `58-format-conversion-xl` (gap type - format conversion XL)
 23. `59-planning-decomposition-at-scale` (gap type - planning decomposition at scale)
 24. `60-multi-turn-coherence` (gap type - multi-turn coherence)
+
+**Batch 5 - Chat A (61-70, consistency battery extension, variant_pool 15):**
+25. `61-regression-risk-enumeration` (buried regression path via an indirect caller two hops away)
+26. `62-security-surface-enumeration` (tainted input arriving via a deserialized config field, not a direct param)
+27. `63-edge-case-enumeration` (whitespace-only edge case: empty-after-trim-but-non-empty-raw)
+28. `64-migration-step-completeness` (drop-prone step: backfill nullable column before adding NOT NULL)
+29. `65-api-contract-change-completeness` (consumer reads renamed field via a generic key-iteration loop)
+30. `66-config-drift-detection` (semantically-equal-but-textually-different drift: 30s vs 30000ms)
+31. `67-cross-doc-contradiction-at-scale` (contradiction triangulated across three docs)
+32. `68-dependency-graph-completeness` (dependency reached only via a dynamically-constructed import string)
+33. `69-test-coverage-gap-detection` (uncovered branch: error path of an early-return guard)
+34. `70-refactor-blast-radius-enumeration` (copy-pasted inline duplicate with no call site to grep)
+
+**Batch 5 - Chat B (71-72, 75-80, gaps: agentic + >200k context, variant_pool 9):**
+35. `71-agentic-debug-loop` (hypothesis-test-revise vs thrash on a failing test)
+36. `72-multi-tool-orchestration` (correct dependency-aware tool-call ordering, no redundant calls)
+37. `75-200k-context-needle-synthesis` (find all 3 needles in a >200k-token corpus, no fabrication)
+38. `76-200k-cross-file-refactor` (catch every call site across a >200k-token codebase, none dropped at distance)
+39. `77-long-context-summarization-fidelity` (retain every load-bearing claim, invent none)
+40. `78-tool-error-recovery` (detect a malformed tool payload vs proceed on garbage)
+41. `79-multi-turn-agentic-coherence` (hold an early-stated constraint to the final step)
+42. `80-plan-then-execute-agentic` (execution matches the plan, no silent plan drift)
+
+**Batch 5 - Chat C (81-90, domain-realistic personal-ops / markdown-KB, variant_pool 9):**
+43. `81-queue-file-update-synthesis` (check off done items, rotate 5+ completed, no fabricated tasks)
+44. `82-handoff-doc-synthesis` (correct done/in-progress/blocked bucketing, no invented blockers)
+45. `83-leaf-extraction` (clean extraction boundary + trunk back-reference added)
+46. `84-adr-authoring` (capture decision + alternatives + consequences, no scope creep)
+47. `85-cross-domain-kb-write` (consistent finding across all 3 write surfaces, no drift)
+48. `86-scout-summary-synthesis` (cite all 4 scouts, flag the contradiction, no fabrication)
+49. `87-session-wrap-protocol-execution` (all 8 wrap steps performed, none skipped)
+50. `88-voice-stable-drafting` (voice adherence + no banned constructs, content accurate)
+51. `89-workflow-automation-reasoning` (respect never-delete-only-deactivate style invariants)
+52. `90-multi-doc-dedup` (zero unique-fact loss while removing true duplicates)
+
+**Batch 5 - Chat D (91-100, output-discipline battery + high-value re-runs):**
+53. `91-forbidden-content-adherence` (zero forbidden-content leaks across the whole output)
+54. `92-exact-format-compliance` (byte-level format match, no extra prose)
+55. `93-sealed-label-adherence` (never reveal the sealed label)
+56. `94-hard-length-limit-discipline` (under the hard ceiling and complete)
+57. `95-scope-creep-resistance` (do exactly the asked task, no unrequested additions)
+58. `96-multi-constraint-simultaneous` (all five constraints held at once under load)
+59. `97-rerun-eval25-tie-n5` (re-run eval 25 Opus/Sonnet tie at N=5)
+60. `98-rerun-eval37-consistency-n5` (re-run eval 37 contested consistency result at N=5)
+61. `99-rerun-eval52-sonnet-fail-n5` (re-run eval 52 Sonnet sealed-label fail at N=5)
+62. `100-rerun-eval22-opus-niche-n5` (re-run eval 22 strongest Opus-niche win at N=5)
 
 ---
 
