@@ -1,0 +1,16 @@
+{
+  "_comment": "Acme Orders service config (PRE-change state). The default_order template seeds a draft order. Its customer_id is an integer placeholder (0). After the change the key must be account_ref and the value a string UUID placeholder, consistent with every other artifact.",
+  "service": {
+    "name": "acme-orders",
+    "port": 8080
+  },
+  "default_order": {
+    "customer_id": 0,
+    "status": "pending",
+    "total_cents": 0
+  },
+  "validation": {
+    "required_fields": ["customer_id", "total_cents"],
+    "customer_id_max_length": null
+  }
+}

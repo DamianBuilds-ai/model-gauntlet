@@ -1,0 +1,16 @@
+customer_id,customer_name,customer_email,order_id,order_date,line_no,sku,product_name,quantity,unit_price_cents,discount_code
+C001,Ada Lovelace,ada@example.com,O1001,2026-03-01,1,SKU-RED,Red Widget,2,1500,SPRING10
+C001,Ada Lovelace,ada@example.com,O1001,2026-03-01,2,SKU-BLU,Blue Widget,1,2200,SPRING10
+C001,Ada Lovelace,ada@example.com,O1042,2026-03-14,1,SKU-GRN,Green Gadget,5,800,
+C002,Alan Turing,alan@example.com,O1003,2026-03-02,1,SKU-RED,Red Widget,1,1500,
+C002,Alan Turing,alan@example.com,O1003,2026-03-02,2,SKU-YLW,Yellow Doohickey,3,650,WELCOME5
+C002,Alan Turing,alan@example.com,O1003,2026-03-02,3,SKU-BLU,Blue Widget,2,2200,WELCOME5
+C003,Grace Hopper,grace@example.com,O1007,2026-03-05,1,SKU-GRN,Green Gadget,10,800,BULK20
+C003,Grace Hopper,grace@example.com,O1011,2026-03-09,1,SKU-RED,Red Widget,4,1500,
+C003,Grace Hopper,grace@example.com,O1011,2026-03-09,2,SKU-RED,Red Widget,two,1500,
+C004,Edsger Dijkstra,edsger@example.com,O1015,2026-03-11,1,SKU-BLK,Black Box,1,9900,
+C004,Edsger Dijkstra,edsger@example.com,O1015,2026-03-11,2,SKU-YLW,Yellow Doohickey,6,650,SPRING10
+C005,Katherine Johnson,katherine@example.com,O1020,2026-03-12,1,SKU-BLU,Blue Widget,3,2200,
+C005,Katherine Johnson,katherine@example.com,O1020,2026-03-12,2,SKU-GRN,Green Gadget,2,800,
+C005,Katherine Johnson,katherine@example.com,O1031,2026-03-13,1,SKU-BLK,Black Box,1,9900,VIP15
+C006,Margaret Hamilton,margaret@example.com,O1040,2026-03-16,1,SKU-RED,Red Widget,7,1500,

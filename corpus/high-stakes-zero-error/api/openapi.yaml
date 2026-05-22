@@ -1,0 +1,49 @@
+# Acme Orders - OpenAPI contract (PRE-change state).
+# Documents the Order response schema. customer_id is typed as integer here. After
+# the change it must be account_ref, type string, format uuid, maxLength 36 -
+# matching the DDL, model, serializer, config, docs, and sample.
+
+openapi: 3.0.3
+info:
+  title: Acme Orders API
+  version: "1.0.0"
+
+components:
+  schemas:
+    Order:
+      type: object
+      required:
+        - id
+        - customer_id
+        - status
+        - total_cents
+      properties:
+        id:
+          type: integer
+          format: int64
+        customer_id:
+          type: integer
+          description: Identifier of the order owner.
+        status:
+          type: string
+          enum: [pending, paid, shipped, cancelled]
+        total_cents:
+          type: integer
+
+paths:
+  /orders/{id}:
+    get:
+      summary: Fetch one order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"

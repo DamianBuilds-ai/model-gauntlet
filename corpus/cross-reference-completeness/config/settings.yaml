@@ -1,0 +1,25 @@
+# Acme Ledger runtime configuration.
+#
+# The tax.calculator key below names the deprecated function as its dotted path.
+# This is a STRING reference - a plugin loader resolves this string to the
+# callable at startup, so the migration must update this config value too even
+# though it is not Python code. A grep for the function name finds it here.
+
+service:
+  name: acme-ledger
+  port: 8080
+
+database:
+  host: db.internal
+  pool_size: 20
+
+tax:
+  # Dotted path resolved at runtime to the tax callable. Points at the
+  # deprecated function - must repoint to the new TaxEngine.compute path.
+  calculator: "src.tax.legacy:legacy_compute_tax"
+  default_region: "AU"
+  rounding: "half_up"
+
+features:
+  proforma_enabled: true
+  credit_notes_enabled: true

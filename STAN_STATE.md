@@ -40,6 +40,21 @@ One row per eval the framework can run. `status` is one of: `queued` (not yet ru
 | 07 | 07-codebase-qa | codebase-qa | corpus/codebase-qa/ | queued |
 | 08 | 08-multi-doc-consolidation | multi-doc-consolidation | corpus/multi-doc-consolidation/ | queued |
 | 09 | 09-heavy-research | heavy-research | corpus/heavy-research/ | queued |
+| 10 | 10-greenfield-code-gen | greenfield-code-gen | corpus/greenfield-code-gen/spec.md | queued |
+| 11 | 11-bug-fix-from-stacktrace | bug-fix-from-stacktrace | corpus/bug-fix-from-stacktrace/ | queued |
+| 12 | 12-test-generation | test-generation | corpus/test-generation/money.py | queued |
+| 13 | 13-structured-extraction | structured-extraction | corpus/structured-extraction/ | queued |
+| 14 | 14-long-context-retrieval | long-context-retrieval | corpus/long-context-retrieval/ | queued |
+| 15 | 15-summarization-under-constraint | summarization-under-constraint | corpus/summarization-under-constraint/ | queued |
+| 16 | 16-ambiguity-resolution | ambiguity-resolution | corpus/ambiguity-resolution/ | queued |
+| 17 | 17-data-reshaping | data-reshaping | corpus/data-reshaping/ | queued |
+| 18 | 18-regex-parser-building | regex-parser-building | corpus/regex-parser-building/ | queued |
+| 19 | 19-tone-voice-rewrite | tone-voice-rewrite | corpus/tone-voice-rewrite/blunt-pr-rant.md | queued |
+| 20 | 20-logic-math-reasoning | logic-math-reasoning | corpus/logic-math-reasoning/scheduling-puzzle.md | queued |
+| 21 | 21-api-usage-correctness | api-usage-correctness | corpus/api-usage-correctness/pulsedeck-sdk-docs.md | queued |
+| 22 | 22-cross-reference-completeness | cross-reference-completeness | corpus/cross-reference-completeness/ | queued |
+| 23 | 23-multi-constraint-satisfaction | multi-constraint-satisfaction | corpus/multi-constraint-satisfaction/ | queued |
+| 24 | 24-high-stakes-zero-error | high-stakes-zero-error | corpus/high-stakes-zero-error/ | queued |
 
 <!-- Seeded by the EXAMPLE-eval + queue dispatch (2026-05-21). Each row points at a
      spec file in specs/NN-slug.md and a corpus path under corpus/. Minimum batch
@@ -77,6 +92,21 @@ empty it falls back to the first 5 `queued` rows in the Eval queue.
 7. `07-codebase-qa` (new task type - multi-file code comprehension)
 8. `08-multi-doc-consolidation` (multi-file dimension probe - 15 docs, 3 cross-doc conflicts)
 9. `09-heavy-research` (heavy multi-source synthesis - 16 sources, 2 reliability traps)
+10. `10-greenfield-code-gen` (new task type - spec-to-implementation)
+11. `11-bug-fix-from-stacktrace` (new task type - root-cause debugging)
+12. `12-test-generation` (new task type - pytest suite authoring)
+13. `13-structured-extraction` (new task type - messy notes to JSON)
+14. `14-long-context-retrieval` (new task type - cite-the-section QA)
+15. `15-summarization-under-constraint` (new task type - 150-word hard cap)
+16. `16-ambiguity-resolution` (new task type - under-specified ticket)
+17. `17-data-reshaping` (new task type - flat CSV to nested JSON)
+18. `18-regex-parser-building` (new task type - custom log format parser)
+19. `19-tone-voice-rewrite` (new task type - blunt to diplomatic)
+20. `20-logic-math-reasoning` (new task type - scheduling puzzle)
+21. `21-api-usage-correctness` (new task type - SDK-constrained function)
+22. `22-cross-reference-completeness` (new task type - migration checklist)
+23. `23-multi-constraint-satisfaction` (new task type - 12-constraint refactor)
+24. `24-high-stakes-zero-error` (new task type - 7-artifact consistency)
 
 ---
 

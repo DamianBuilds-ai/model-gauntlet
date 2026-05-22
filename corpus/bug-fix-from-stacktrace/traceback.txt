@@ -1,0 +1,22 @@
+Traceback produced by running `python3 cart.py`. The script builds a first cart (via
+build_first_order), then builds a second, supposedly independent cart (via
+build_second_order), and asks the DiscountEngine for the amount due on the SECOND
+cart. It crashes before printing the amount.
+
+Note the diagnostic line printed just before the crash:
+
+    second cart line count: 5
+
+The second cart was built with exactly two add_item calls, so a line count of 5 is
+already wrong - the cart is holding items it was never given.
+
+$ python3 cart.py
+second cart line count: 5
+Traceback (most recent call last):
+  File "cart.py", line 93, in <module>
+    print("amount due (second):", engine.amount_due(second))
+                                  ~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "cart.py", line 62, in amount_due
+    discounted = line_total - (line_total * self.percent_off / 100.0)
+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+TypeError: unsupported operand type(s) for /: 'str' and 'float'
