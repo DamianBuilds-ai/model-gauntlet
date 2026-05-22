@@ -1,0 +1,14 @@
+# globex_billing fee registry - maps a logical fee name to the dotted import
+# path of the callable that computes it. The platform resolves these strings at
+# runtime via importlib.
+
+fees:
+  shipping:
+    callable: "globex_billing.core.fees:compute_shipping_fee"
+    enabled: true
+  handling:
+    callable: "globex_billing.core.fees:compute_handling_fee"
+    enabled: true
+  shipping_total:
+    callable: "globex_billing.core.fees:recompute_shipping_fee_total"
+    enabled: false

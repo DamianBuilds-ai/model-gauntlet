@@ -1,0 +1,3 @@
+Scratch notes - not part of the release. Mentions version 1.4.2 and port 8080 in
+passing, but this file is a decoy: the change spec does NOT list it, so it must be
+left exactly as-is. Do not bump the version here, do not touch the port here.

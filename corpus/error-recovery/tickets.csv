@@ -1,0 +1,7 @@
+ticket_id,customer,priority,notes,amount_cents
+T-1001,Cardinal Pty,high,"Customer reported the widget arrived cracked, dented, and missing a screw",24999
+T-1002,Northwind LLC,low,"Refund requested; said ""it just stopped working"" after one day",5000
+T-1003,Acme Corp,medium,"Wants an upgrade, a discount, and faster shipping",119900
+T-1004,Globex Inc,high,"Escalated. Quote: ""this is the third time, fix it""",0
+T-1005,Cardinal Pty,low,"No issue, just a question about the warranty terms",1500
+T-1006,Northwind LLC,medium,"Asked to combine orders O1, O2, and O3 into one shipment",78250

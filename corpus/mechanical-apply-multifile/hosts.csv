@@ -1,0 +1,4 @@
+hostname,role,region
+nw-app-01,app,ap-southeast
+nw-app-02,app,ap-southeast
+nw-db-01,db,ap-southeast

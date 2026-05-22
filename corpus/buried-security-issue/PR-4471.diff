@@ -1,0 +1,252 @@
+PR-4471: Add saved-search filters, tidy auth helpers, and misc cleanups
+Author: a.fischer
+Files changed: 10
+
+diff --git a/northwind/api/orders.py b/northwind/api/orders.py
+index 1a2b3c4..5d6e7f8 100644
+--- a/northwind/api/orders.py
++++ b/northwind/api/orders.py
+@@ -10,7 +10,7 @@ from northwind.db.queries import OrderQueries
+ from northwind.util.pagination import paginate
+
+
+-def list_orders(request):
++def list_orders(request, *, include_archived=False):
+     """Return a page of orders for the current account."""
+     account_id = request.account.id
+     page = int(request.query.get("page", "1"))
+@@ -18,9 +18,11 @@ def list_orders(request):
+     size = min(int(request.query.get("size", "25")), 100)
+     q = OrderQueries(request.db)
+     rows = q.for_account(account_id, page=page, size=size)
++    if not include_archived:
++        rows = [r for r in rows if r["status"] != "archived"]
+     return paginate(rows, page=page, size=size)
+
+
+ def get_order(request, order_id):
+     account_id = request.account.id
+     q = OrderQueries(request.db)
+-    return q.by_id(order_id, account_id=account_id)
++    row = q.by_id(order_id, account_id=account_id)
++    return row
+
+diff --git a/northwind/api/search.py b/northwind/api/search.py
+index 2b3c4d5..6e7f8a9 100644
+--- a/northwind/api/search.py
++++ b/northwind/api/search.py
+@@ -1,12 +1,28 @@
+ from northwind.db.queries import OrderQueries
+ from northwind.util.pagination import paginate
+
++ALLOWED_SORTS = {"created_at", "total", "status", "customer_name"}
++
+
+-def search_orders(request):
+-    account_id = request.account.id
+-    term = request.query.get("q", "")
+-    q = OrderQueries(request.db)
+-    rows = q.search(account_id, term)
+-    return paginate(rows, page=1, size=25)
++def search_orders(request):
++    """Saved-search endpoint. Supports a text term, a status filter, and a
++    user-chosen sort column."""
++    account_id = request.account.id
++    term = request.query.get("q", "")
++    status = request.query.get("status")
++    sort = request.query.get("sort", "created_at")
++    direction = request.query.get("dir", "desc").lower()
++    if direction not in ("asc", "desc"):
++        direction = "desc"
++    page = int(request.query.get("page", "1"))
++    size = min(int(request.query.get("size", "25")), 100)
++    q = OrderQueries(request.db)
++    rows = q.search(
++        account_id,
++        term,
++        status=status,
++        sort_column=sort,
++        direction=direction,
++    )
++    return paginate(rows, page=page, size=size)
+
+diff --git a/northwind/db/queries.py b/northwind/db/queries.py
+index 3c4d5e6..7f8a9b0 100644
+--- a/northwind/db/queries.py
++++ b/northwind/db/queries.py
+@@ -22,18 +22,42 @@ class OrderQueries:
+     def by_id(self, order_id, *, account_id):
+         sql = "SELECT * FROM orders WHERE id = %s AND account_id = %s"
+         return self.db.fetchone(sql, (order_id, account_id))
+
+-    def search(self, account_id, term):
+-        sql = (
+-            "SELECT * FROM orders "
+-            "WHERE account_id = %s AND customer_name ILIKE %s "
+-            "ORDER BY created_at DESC LIMIT 200"
+-        )
+-        like = f"%{term}%"
+-        return self.db.fetchall(sql, (account_id, like))
++    def search(self, account_id, term, *, status=None, sort_column="created_at",
++               direction="desc"):
++        # Build the WHERE clause with bound parameters. The text term and the
++        # optional status filter are passed as query parameters, never inlined.
++        clauses = ["account_id = %s", "customer_name ILIKE %s"]
++        params = [account_id, f"%{term}%"]
++        if status is not None:
++            clauses.append("status = %s")
++            params.append(status)
++        where = " AND ".join(clauses)
++        # Apply the caller's chosen sort column and direction.
++        order_by = f"ORDER BY {sort_column} {direction.upper()}"
++        sql = (
++            f"SELECT * FROM orders WHERE {where} {order_by} LIMIT 200"
++        )
++        return self.db.fetchall(sql, tuple(params))
++
++    def for_account(self, account_id, *, page, size):
++        offset = (page - 1) * size
++        sql = (
++            "SELECT * FROM orders WHERE account_id = %s "
++            "ORDER BY created_at DESC LIMIT %s OFFSET %s"
++        )
++        return self.db.fetchall(sql, (account_id, size, offset))
+
+diff --git a/northwind/db/connection.py b/northwind/db/connection.py
+index 4d5e6f7..8a9b0c1 100644
+--- a/northwind/db/connection.py
++++ b/northwind/db/connection.py
+@@ -5,9 +5,13 @@ import psycopg2
+
+
+ class Connection:
+-    def __init__(self, dsn):
+-        self._conn = psycopg2.connect(dsn)
++    def __init__(self, dsn, *, statement_timeout_ms=5000):
++        self._conn = psycopg2.connect(dsn)
++        with self._conn.cursor() as cur:
++            cur.execute("SET statement_timeout = %s", (statement_timeout_ms,))
++        self._conn.commit()
+
+     def fetchone(self, sql, params):
+         with self._conn.cursor() as cur:
+             cur.execute(sql, params)
+             return cur.fetchone()
+
+diff --git a/northwind/auth/tokens.py b/northwind/auth/tokens.py
+index 5e6f7a8..9b0c1d2 100644
+--- a/northwind/auth/tokens.py
++++ b/northwind/auth/tokens.py
+@@ -1,16 +1,21 @@
+ import hmac
+ import hashlib
++import secrets
+
+
+ def make_token(account_id, secret):
+-    msg = str(account_id).encode("utf-8")
+-    return hmac.new(secret, msg, hashlib.sha256).hexdigest()
++    nonce = secrets.token_hex(8)
++    msg = f"{account_id}:{nonce}".encode("utf-8")
++    mac = hmac.new(secret, msg, hashlib.sha256).hexdigest()
++    return f"{nonce}.{mac}"
+
+
+ def verify_token(token, account_id, secret):
+-    expected = make_token(account_id, secret)
+-    return hmac.compare_digest(expected, token)
++    nonce, _, mac = token.partition(".")
++    msg = f"{account_id}:{nonce}".encode("utf-8")
++    expected = hmac.new(secret, msg, hashlib.sha256).hexdigest()
++    return hmac.compare_digest(expected, mac)
+
+diff --git a/northwind/auth/passwords.py b/northwind/auth/passwords.py
+index 6f7a8b9..0c1d2e3 100644
+--- a/northwind/auth/passwords.py
++++ b/northwind/auth/passwords.py
+@@ -1,12 +1,12 @@
+ import bcrypt
+
+
+ def hash_password(plaintext):
+-    return bcrypt.hashpw(plaintext.encode("utf-8"), bcrypt.gensalt())
++    return bcrypt.hashpw(plaintext.encode("utf-8"), bcrypt.gensalt(rounds=12))
+
+
+ def check_password(plaintext, hashed):
+     return bcrypt.checkpw(plaintext.encode("utf-8"), hashed)
+
+diff --git a/northwind/util/logging.py b/northwind/util/logging.py
+index 7a8b9c0..1d2e3f4 100644
+--- a/northwind/util/logging.py
++++ b/northwind/util/logging.py
+@@ -3,10 +3,14 @@ import logging
+ _logger = logging.getLogger("northwind")
+
+
+-def log_request(request):
+-    _logger.info("request path=%s account=%s", request.path, request.account.id)
++def log_request(request):
++    # Redact the Authorization header before logging request metadata.
++    headers = dict(request.headers)
++    if "Authorization" in headers:
++        headers["Authorization"] = "[redacted]"
++    _logger.info("request path=%s account=%s headers=%s",
++                 request.path, request.account.id, headers)
+
+diff --git a/northwind/util/pagination.py b/northwind/util/pagination.py
+index 8b9c0d1..2e3f4a5 100644
+--- a/northwind/util/pagination.py
++++ b/northwind/util/pagination.py
+@@ -1,8 +1,11 @@
+-def paginate(rows, page, size):
+-    start = (page - 1) * size
+-    end = start + size
+-    return {"items": rows[start:end], "page": page, "size": size}
++def paginate(rows, page, size):
++    start = (page - 1) * size
++    end = start + size
++    return {
++        "items": rows[start:end],
++        "page": page,
++        "size": size,
++        "total": len(rows),
++    }
+
+diff --git a/northwind/jobs/export.py b/northwind/jobs/export.py
+index 9c0d1e2..3f4a5b6 100644
+--- a/northwind/jobs/export.py
++++ b/northwind/jobs/export.py
+@@ -1,15 +1,18 @@
+ import csv
+ import io
+
+
+-def export_orders(rows):
+-    buf = io.StringIO()
+-    writer = csv.writer(buf)
+-    writer.writerow(["id", "customer", "total", "status"])
+-    for r in rows:
+-        writer.writerow([r["id"], r["customer_name"], r["total"], r["status"]])
+-    return buf.getvalue()
++def export_orders(rows):
++    buf = io.StringIO()
++    writer = csv.writer(buf)
++    writer.writerow(["id", "customer", "total", "status", "created_at"])
++    for r in rows:
++        writer.writerow([
++            r["id"], r["customer_name"], r["total"], r["status"],
++            r.get("created_at", ""),
++        ])
++    return buf.getvalue()
+
+diff --git a/requirements.txt b/requirements.txt
+index a0b1c2d..b3c4d5e 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,4 +1,4 @@
+ psycopg2-binary==2.9.9
+-bcrypt==4.0.1
++bcrypt==4.1.2
+ requests==2.31.0
+ pyyaml==6.0.1

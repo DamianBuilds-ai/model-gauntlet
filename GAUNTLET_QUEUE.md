@@ -67,6 +67,30 @@ One row per eval the framework can run. `status` is one of: `queued` (not yet ru
 | 34 | 34-heavy-data-transformation | heavy-data-transformation | corpus/heavy-data-transformation/ | queued |
 | 35 | 35-heavy-translation | heavy-translation | corpus/heavy-translation/ | queued |
 | 36 | 36-heavy-classification | heavy-classification | corpus/heavy-classification/ | queued |
+| 37 | 37-cross-ref-completeness-consistency | cross-reference-completeness-consistency | corpus/cross-reference-completeness/ | queued (pool 15) |
+| 38 | 38-codebase-comprehension-consistency | codebase-comprehension-consistency | corpus/heavy-codebase-comprehension/ | queued (pool 15) |
+| 39 | 39-subtle-conflict-consistency | subtle-conflict-consistency | corpus/completeness-under-conflict/ | queued (pool 15) |
+| 40 | 40-long-context-needle-consistency | long-context-retrieval | corpus/long-context-needle-consistency/ | queued (pool 15) |
+| 41 | 41-dependency-completeness-consistency | cross-reference-completeness | corpus/dependency-completeness-consistency/ | queued (pool 15) |
+| 42 | 42-large-rename-consistency | cross-reference-completeness | corpus/large-rename-consistency/ | queued (pool 15) |
+| 43 | 43-spec-compliance-consistency | spec-compliance-consistency | corpus/spec-compliance-consistency/ | queued (pool 15) |
+| 44 | 44-subtle-spec-violation-detection | subtle-spec-violation-detection | corpus/subtle-spec-violation-detection/ | queued (pool 15) |
+| 45 | 45-stale-fact-detection | stale-fact-detection | corpus/stale-fact-detection/ | queued (pool 15) |
+| 46 | 46-buried-security-issue | buried-security-issue | corpus/buried-security-issue/ | queued (pool 15) |
+| 47 | 47-single-contradiction-detection | single-contradiction-detection | corpus/single-contradiction-detection/ | queued (pool 15) |
+| 48 | 48-edge-case-completeness | edge-case-completeness | corpus/edge-case-completeness/ | queued (pool 15) |
+| 49 | 49-mechanical-apply-exact | mechanical-apply-exact | corpus/mechanical-apply-exact/ | queued |
+| 50 | 50-mechanical-apply-multifile | mechanical-apply-multifile | corpus/mechanical-apply-multifile/ | queued |
+| 51 | 51-patch-application | patch-application | corpus/patch-application/ | queued |
+| 52 | 52-numerical-accuracy-at-scale | numerical-accuracy-at-scale | corpus/numerical-accuracy-at-scale/ | queued |
+| 53 | 53-ambiguous-spec-implementation | ambiguous-spec-implementation | corpus/ambiguous-spec-implementation/ | queued |
+| 54 | 54-error-recovery | error-recovery | corpus/error-recovery/ | queued |
+| 55 | 55-instruction-conflict-resolution | instruction-conflict-resolution | corpus/instruction-conflict-resolution/ | queued |
+| 56 | 56-prompt-injection-resistance | prompt-injection-resistance | corpus/prompt-injection-resistance/ | queued |
+| 57 | 57-safety-refusal-calibration | safety-refusal-calibration | corpus/safety-refusal-calibration/ | queued |
+| 58 | 58-format-conversion-xl | format-conversion | corpus/format-conversion-xl/ | queued |
+| 59 | 59-planning-decomposition-at-scale | planning-decomposition | corpus/planning-decomposition-at-scale/ | queued |
+| 60 | 60-multi-turn-coherence | multi-turn-coherence | corpus/multi-turn-coherence/ | queued |
 
 <!-- Each row points at a spec file in specs/NN-slug.md and a corpus path under
      corpus/. Minimum batch size for a run is 5; the rows below are the live queue
@@ -95,19 +119,33 @@ The slugs the next `/eval-run` will process, in order. Minimum 5 (fewer only if
 fewer than 5 remain queued). The orchestrator pulls from here; if this section is
 empty it falls back to the first 5 `queued` rows in the Eval queue.
 
-1. `18-regex-parser-building` (new task type - custom log format parser)
-2. `25-cross-reference-completeness-at-scale` (heavy - scaled cross-reference completeness)
-3. `26-heavy-research-v2` (heavy - multi-source research v2)
-4. `27-completeness-under-conflict` (heavy - completeness under conflicting sources)
-5. `28-heavy-multi-constraint-at-scale` (heavy - scaled multi-constraint satisfaction)
-6. `29-heavy-long-horizon-instruction-following` (heavy - long-horizon instruction following)
-7. `30-heavy-cross-artifact-consistency` (heavy - cross-artifact consistency)
-8. `31-heavy-codebase-comprehension` (heavy - codebase comprehension)
-9. `32-heavy-long-context-retrieval` (heavy - long-context retrieval)
-10. `33-heavy-multi-doc-consolidation` (heavy - multi-doc consolidation)
-11. `34-heavy-data-transformation` (heavy - data transformation)
-12. `35-heavy-translation` (heavy - translation)
-13. `36-heavy-classification` (heavy - classification)
+**37-48 (consistency battery, variant_pool 15):**
+1. `37-cross-ref-completeness-consistency` (consistency - cross-reference completeness, N=5)
+2. `38-codebase-comprehension-consistency` (consistency - codebase comprehension, N=5)
+3. `39-subtle-conflict-consistency` (consistency - subtle conflict detection, N=5)
+4. `40-long-context-needle-consistency` (consistency - long-context needle retrieval, N=5)
+5. `41-dependency-completeness-consistency` (consistency - dependency completeness, N=5)
+6. `42-large-rename-consistency` (consistency - large rename, N=5)
+7. `43-spec-compliance-consistency` (consistency - spec compliance, N=5)
+8. `44-subtle-spec-violation-detection` (consistency - subtle spec violation, N=5)
+9. `45-stale-fact-detection` (consistency - stale fact detection, N=5)
+10. `46-buried-security-issue` (consistency - buried security issue, N=5)
+11. `47-single-contradiction-detection` (consistency - single contradiction, N=5)
+12. `48-edge-case-completeness` (consistency - edge-case completeness, N=5)
+
+**49-60:**
+13. `49-mechanical-apply-exact` (setter test - exact mechanical apply)
+14. `50-mechanical-apply-multifile` (setter test - multi-file mechanical apply)
+15. `51-patch-application` (setter test - patch application)
+16. `52-numerical-accuracy-at-scale` (gap type - numerical accuracy at scale)
+17. `53-ambiguous-spec-implementation` (gap type - ambiguous spec implementation)
+18. `54-error-recovery` (gap type - error recovery)
+19. `55-instruction-conflict-resolution` (gap type - instruction conflict resolution)
+20. `56-prompt-injection-resistance` (gap type - prompt injection resistance)
+21. `57-safety-refusal-calibration` (gap type - safety refusal calibration)
+22. `58-format-conversion-xl` (gap type - format conversion XL)
+23. `59-planning-decomposition-at-scale` (gap type - planning decomposition at scale)
+24. `60-multi-turn-coherence` (gap type - multi-turn coherence)
 
 ---
 
