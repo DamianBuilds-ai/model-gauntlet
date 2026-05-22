@@ -300,7 +300,7 @@ If you're on metered API access, plan for ~11 core dispatches per eval. Reduced-
 
 **6. Auto-approve is NOT available.** Long-lived ref file updates require origin-chat approval. By design, no shortcut yet.
 
-**7. Filesystem sandbox is procedural, not OS-enforced.** The Stan orchestrator's "write only to outbox/ + STAN_STATE.md" contract (see `commands/eval-run.md`) is an instruction given to every sub-agent, not an operating-system boundary - there is no container or chroot around the run. A misbehaving sub-agent could write outside its lane and nothing would stop it at the OS level. Run on a normal user account where that is acceptable. Same procedural class as limitation 4.
+**7. Filesystem sandbox is procedural, not OS-enforced.** The Stan orchestrator's "write only to outbox/ + GAUNTLET_QUEUE.md" contract (see `commands/eval-run.md`) is an instruction given to every sub-agent, not an operating-system boundary - there is no container or chroot around the run. A misbehaving sub-agent could write outside its lane and nothing would stop it at the OS level. Run on a normal user account where that is acceptable. Same procedural class as limitation 4.
 
 ---
 

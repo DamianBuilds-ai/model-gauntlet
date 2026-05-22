@@ -90,8 +90,8 @@ and the ask is "connect the threads + prioritize", Haiku low is the practical ro
 Reserve a higher tier only when the synthesis requires deeper judgment than this
 corpus demanded. Opus high showed effort-tax verbosity with no quality buy here.
 
-Caveat: reduced-N=6 EXAMPLE with illustrative cost multipliers. Re-run at full
-12-variant pool with live pricing before locking this into the routing map.
+Caveat: reduced-N=6 EXAMPLE with illustrative cost multipliers. Re-run at the full
+9-variant model-only pool with live pricing before locking this into the routing map.
 ```
 
 ---

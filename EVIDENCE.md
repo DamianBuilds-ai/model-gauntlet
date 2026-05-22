@@ -2,6 +2,8 @@
 
 The first day's evidence from the framework's launch (2026-05-19). 10 completed evals across 5+ task classes. This dossier is both **proof-of-method** ("here is what the method produces when applied") AND a **baseline routing reference** for your own decisions until your own evals supersede.
 
+> **Note on framework version:** this dataset was produced under the v1.4 12-variant model+effort pool (Haiku/Sonnet/Opus across low/medium/high/xhigh/max). v1.5 later changed the dispatch default to a 9-variant model-only pool (effort is not a current dispatch dimension - it may be revisited), but the model-level findings recorded here still hold.
+
 > All confidence labels are calibrated against the N=10 dataset. Read these as starting hypotheses, not laws. Run your own evals to confirm or refute.
 
 ---

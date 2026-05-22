@@ -1,0 +1,39 @@
+# Cardinal runtime configuration.
+#
+# This file is read at boot by core/config.py. Most keys are plumbing. ONE key
+# names reserve_stock as a dotted-path string that the platform resolves and calls
+# at runtime (the inventory reserve hook). That string is a TRUE reference to
+# reserve_stock - a code-only grep of .py files misses it, but the function IS
+# reached through this value, so the location belongs on a complete reference list.
+
+service_name: cardinal
+environment: production
+
+http:
+  host: 0.0.0.0
+  port: 8080
+  request_timeout_seconds: 30
+
+database:
+  dsn: postgres://cardinal:cardinal@db.internal:5432/cardinal
+  pool_size: 20
+
+inventory:
+  # Runtime hook: the platform imports and calls THIS dotted path to place holds.
+  # Value names reserve_stock - a true, runtime-resolved reference to the target.
+  reserve_hook: "cardinal.inventory.reservations:reserve_stock"
+  # Reporting hook names the DIFFERENT snapshot function - this is NOT a reserve_stock
+  # reference (it points at reserve_stock_snapshot, the precision-trap function).
+  snapshot_hook: "cardinal.inventory.reservations:reserve_stock_snapshot"
+  default_hold_ttl_seconds: 900
+
+payments:
+  gateway: globex
+  capture_mode: deferred
+
+shipping:
+  default_carrier: northwind-freight
+
+notifications:
+  email_provider: initech-mail
+  sms_provider: umbra-sms

@@ -1,0 +1,23 @@
+[2026-03-01T08:14:02Z] INFO  api: msg="request received" method=GET path=/health status=200 dur_ms=3
+[2026-03-01T08:14:05Z] INFO  api: msg="request received" method=POST path=/login status=200 dur_ms=42 user=alice
+[2026-03-01T08:14:06Z] WARN  auth: msg="slow token verify" dur_ms=512 user=bob
+[2026-03-01T08:14:09Z] INFO  api: msg="request received" method=GET path=/search status=200 dur_ms=18 user=alice query="red, blue, and green"
+[2026-03-01T08:14:11Z] ERROR db: msg="query failed" dur_ms=1043 sql="SELECT * FROM t WHERE a=1, b=2" code=23505
+[2026-03-01T08:14:12Z] DEBUG cache: msg="miss" key=user:alice:profile
+[2026-03-01T08:14:15Z] INFO  api: msg="request received" method=PUT path=/users/42 status=204 dur_ms=27 user=carol
+[2026-03-01T08:14:16Z] WARN  ratelimit: msg="threshold approaching, 80% used" user=dave limit=100 used=80
+[2026-03-01T08:14:19Z] ERROR worker: msg="job crashed" job=resize-image attempt=3
+    Traceback (most recent call last):
+      File "worker.py", line 88, in run
+        img = decode(payload)
+    ValueError: cannot decode payload of length 0
+[2026-03-01T08:14:22Z] INFO  api: msg="request received" method=GET path=/feed status=200 dur_ms=64 user=erin
+[2026-03-01T08:14:23Z] INFO  billing: msg="charge ok" amount="$19.99" currency=USD user=frank
+[2026-03-01T08:14:25Z] WARN  auth: msg="login from new device" user=grace ip=10.0.0.7
+[2026-03-01T08:14:27Z] INFO  api: msg="request received" method=DELETE path=/sessions status=200 dur_ms=11 user=grace
+[2026-03-01T08:14:30Z] ERROR db: msg="deadlock detected, retrying" dur_ms=88 code=40P01
+[2026-03-01T08:14:31Z] DEBUG cache: msg="evicted entries, freeing memory" count=128 reason="ttl, expired"
+[2026-03-01T08:14:34Z] INFO  api: msg="request received" method=GET path=/export status=202 dur_ms=9 user=heidi
+[2026-03-01T08:14:36Z] INFO  api: msg="request received" method=GET path=/status status=200 dur_ms=2
+[2026-03-01T08:14:38Z] WARN  worker: msg="retry scheduled" job=send-email attempt=2 delay_ms=2000
+[2026-03-01T08:14:41Z] ERROR api: msg="unhandled, returning 500" method=POST path=/checkout status=500 dur_ms=305 user=ivan

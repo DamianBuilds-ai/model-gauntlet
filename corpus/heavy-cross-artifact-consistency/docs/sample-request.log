@@ -1,0 +1,40 @@
+# Northwind Orders - captured sample request/response (Globex)
+# Captured from the demo tenant. CR-4471: the customer_ref in both the request
+# and the response bodies below becomes customer_id with an integer value
+# (cust_00417 -> 417). Rewrite this captured log to stay consistent.
+
+>>> POST /orders HTTP/1.1
+>>> Host: orders.globex.example
+>>> Content-Type: application/json
+>>>
+>>> {
+>>>   "order_ref": "ord_5589",
+>>>   "customer_ref": "cust_00417",
+>>>   "currency": "USD",
+>>>   "line_items": [
+>>>     { "sku": "WIDGET-1", "quantity": 2, "unit_price_minor": 1999 }
+>>>   ]
+>>> }
+
+<<< HTTP/1.1 201 Created
+<<< Content-Type: application/json
+<<<
+<<< {
+<<<   "order_ref": "ord_5589",
+<<<   "customer_ref": "cust_00417",
+<<<   "status": "draft",
+<<<   "currency": "USD",
+<<<   "total_minor": 3998,
+<<<   "line_items": [
+<<<     { "sku": "WIDGET-1", "quantity": 2, "unit_price_minor": 1999, "subtotal_minor": 3998 }
+<<<   ]
+<<< }
+
+# A second captured call: list-by-customer.
+>>> GET /orders/by-customer/cust_00417 HTTP/1.1
+>>> Host: orders.globex.example
+
+<<< HTTP/1.1 200 OK
+<<< Content-Type: application/json
+<<<
+<<< [ { "order_ref": "ord_5589", "customer_ref": "cust_00417", "status": "draft", "currency": "USD", "total_minor": 3998, "line_items": [] } ]

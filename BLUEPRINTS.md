@@ -91,12 +91,12 @@ Optional namespace prefix `bp:` to disambiguate from future workflow / command n
 
 ### eval-N-pit
 
-- **Formation:** N model variants (Haiku/Sonnet/Opus + effort levels) running same prompt in parallel with sealed identity labels. Default N=12 (full effort spectrum) per v1.4 - no-gaps comparison across the entire tier/effort matrix.
+- **Formation:** N model variants running the same prompt in parallel with sealed identity labels. Default N=9 - the model-only pool (Haiku x3, Sonnet x3, Opus x3, labels A through I). Effort is not a current dispatch dimension (the Agent tool pins `model:` only).
 - **Tally:** Architect-on-Max with 9-dimension rubric + binary instruction-following gate per `METHOD.md`
 - **When to use:** Prompt-eval framework run; pit tiers / specialists / effort against each other on the same task
 - **When NOT:** Tier choice already obvious (skip the eval)
 - **Per-agent budget:** Per variant: HARD_MAX 5, SOFT_BUDGET 3; Architect tally: HARD_MAX 6, SOFT_BUDGET 4
-- **Standard variant count:** 12 (v1.4 default - full effort spectrum) or 3-6 (reduced N when targeting a specific question, e.g., "is Sonnet high enough?")
+- **Standard variant count:** 9 (model-only default - Haiku x3, Sonnet x3, Opus x3) or 3-6 (reduced N when targeting a specific question, e.g., "is Sonnet enough?")
 - **Reference:** `METHOD.md` for full variant pool spec; `commands/eval-pit.md` for the slash form
 - **Cost class:** $$$ (multi-variant)
 
@@ -134,6 +134,7 @@ Future blueprints may compose Researcher (for deep-research formations) or Scrib
 - **v1.0** (2026-05-19): Starter catalog locked. 7 blueprints (recon-3, spray-5, spray-10, lock, distill-N, forge-1, eval-N-pit).
 - **v1.1** (2026-05-19): Slot grammar formalized, recognition mechanism via hook regex documented.
 - **v1.4 update** (2026-05-19): `eval-N-pit` default variant count changed from 6 to 12 (full effort spectrum). Per no-gaps comparison ask - sweep entire tier / effort matrix unless a specific question warrants a reduced-N run.
+- **v1.5 update** (2026-05-22): `eval-N-pit` default moved to a 9-variant model-only pool (Haiku x3, Sonnet x3, Opus x3, labels A through I). Effort was dropped as a dispatch dimension because the Agent tool pins `model:` only. Effort is not a current dispatch dimension (may be revisited).
 
 ---
 

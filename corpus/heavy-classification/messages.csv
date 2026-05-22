@@ -1,0 +1,303 @@
+id,message
+MSG-0001,Saving takes ages compared to last week - it eventually completes but very slowly.
+MSG-0002,Can you tell me how to archive an old workspace rather than delete it?
+MSG-0003,"How do I set up a recurring report - I think the feature exists, I just cannot find it?"
+MSG-0004,I need to reset my password but the 'forgot password' link is missing from the login page.
+MSG-0005,My two-factor code is not arriving by SMS so I cannot complete login.
+MSG-0006,The dashboard renders the totals as NaN instead of the real numbers.
+MSG-0007,I was promised a discount that is not reflected on my invoice.
+MSG-0008,My reports are extremely slow and meanwhile I noticed an unfamiliar device on my account.
+MSG-0009,"The dashboard hangs for 30 to 40 seconds before anything appears, then it works."
+MSG-0010,Can you switch our billing from monthly to annual and adjust the invoice?
+MSG-0011,Everything lags badly in the afternoon - clicks take seconds to register.
+MSG-0012,I was promised a discount that is not reflected on my invoice.
+MSG-0013,I received an email asking me to confirm my password by clicking a link - it looks like phishing.
+MSG-0014,Can you add a Spanish language option? The product is English only at the moment.
+MSG-0015,The example in the tutorial does not match what the product actually shows on screen.
+MSG-0016,How do I connect the Initech account to the mobile app?
+MSG-0017,The app throws 'undefined is not a function' when I open the reports tab.
+MSG-0018,Everything errors out with 'server unavailable' since this morning.
+MSG-0019,Our API key got committed to a public repo by mistake and may be leaked - what do we do?
+MSG-0020,I need to update the credit card on file for the Initech account billing.
+MSG-0021,I cannot log in - the page just reloads to the sign-in screen with no error.
+MSG-0022,The API reference is missing the parameters for the create-stream call entirely.
+MSG-0023,How do I move a record from one project to another?
+MSG-0024,Can you tell me how to archive an old workspace rather than delete it?
+MSG-0025,My account is locked and the support article on unlocking does not help me get in.
+MSG-0026,The password reset feature is completely broken - it errors for everyone in our team.
+MSG-0027,It would be great if we could schedule reports to email automatically. Please support this.
+MSG-0028,There is no way to export to PDF right now - can you add that?
+MSG-0029,"The Acme workspace crawls during peak hours - heavy lag, no crash."
+MSG-0030,The API reference is missing the parameters for the create-stream call entirely.
+MSG-0031,Can you switch our billing from monthly to annual and adjust the invoice?
+MSG-0032,The search box returns results for a query I did not type.
+MSG-0033,Where do I find my API key in the settings?
+MSG-0034,Saving takes ages compared to last week - it eventually completes but very slowly.
+MSG-0035,The app is laggy and also the Settings docs are outdated.
+MSG-0036,I changed my email and now cannot sign in with either the old or new address.
+MSG-0037,The export button does nothing and the docs say it should be under Tools.
+MSG-0038,The billing page shows error 500 whenever I open it.
+MSG-0039,I am locked out after too many failed attempts and the unlock link does not work.
+MSG-0040,I just got an alert about a login from a device I do not recognise - I think someone else is in my account.
+MSG-0041,"The reports page takes over a minute to load lately, no error, it is just very slow."
+MSG-0042,"Loading a large project times out because it is so slow, no error code shown."
+MSG-0043,"The page is sluggish and scrolling stutters, though nothing actually errors."
+MSG-0044,Please give us role-based permissions - right now everyone has the same access.
+MSG-0045,Numbers in the chart do not match the numbers in the table for the same period.
+MSG-0046,How do I move a record from one project to another?
+MSG-0047,What is the way to rename a project?
+MSG-0048,The login page is broken AND I think a stranger accessed my account yesterday.
+MSG-0049,How do I share a read-only link to a dashboard?
+MSG-0050,There is no bulk-delete and it would really help - can you add it?
+MSG-0051,I cannot log in and I got an email saying my password was changed by someone else.
+MSG-0052,"It would help if the calendar supported recurring events, which it currently cannot do."
+MSG-0053,I just got an alert about a login from a device I do not recognise - I think someone else is in my account.
+MSG-0054,"Login is really slow today, it eventually logs me in after about a minute."
+MSG-0055,What is the way to rename a project?
+MSG-0056,My session keeps expiring after a minute and I have to log in again and again.
+MSG-0057,A teammate can see another customer's records in the app - that data should not be visible to us.
+MSG-0058,Our API key got committed to a public repo by mistake and may be leaked - what do we do?
+MSG-0059,We need the ability to assign tags to multiple records at once - can you build bulk tagging?
+MSG-0060,I am locked out after too many failed attempts and the unlock link does not work.
+MSG-0061,"Is there a way to export to PDF? If not, please add it - we really need it."
+MSG-0062,"Your docs say click Export under Tools, but Export is under File now - the guide is out of date."
+MSG-0063,I was charged for a subscription I never bought and I think my account was hacked.
+MSG-0064,The export button throws an error 500 every single time I click it.
+MSG-0065,How do I move a record from one project to another?
+MSG-0066,Can you support webhooks so we can push events to our own system? There is none today.
+MSG-0067,Can you support webhooks so we can push events to our own system? There is none today.
+MSG-0068,How do I download my past invoices as PDF?
+MSG-0069,"How do I set up a recurring report - I think the feature exists, I just cannot find it?"
+MSG-0070,The code sample in the guide uses a method name that the SDK no longer has.
+MSG-0071,"The reports page takes over a minute to load lately, no error, it is just very slow."
+MSG-0072,I need to reset my password but the 'forgot password' link is missing from the login page.
+MSG-0073,The pricing explanation in the docs contradicts what the billing page says - the doc is unclear.
+MSG-0074,"An old employee still has access and is logging in after leaving - please revoke it, this is a security issue."
+MSG-0075,The single sign-on button does nothing and I have no other way to log in.
+MSG-0076,I was charged twice for this month's subscription and need one charge refunded.
+MSG-0077,I forgot my password and the reset page throws an error when I submit it.
+MSG-0078,What is the way to rename a project?
+MSG-0079,Please give us role-based permissions - right now everyone has the same access.
+MSG-0080,The export button throws an error 500 every single time I click it.
+MSG-0081,The authenticator app is no longer in sync and rejects my codes at login.
+MSG-0082,Search is painfully slow - it spins for a long time before showing results.
+MSG-0083,"Please add a dark mode, the bright theme is hard on the eyes."
+MSG-0084,How can I export my data to CSV?
+MSG-0085,Filtering by status returns the wrong rows - it shows cancelled items under active.
+MSG-0086,The guide says there is an Export button but I do not see one anywhere in the app.
+MSG-0087,"Your docs on enabling two-factor are wrong, and separately someone tried to log into my account."
+MSG-0088,"How do I set up a recurring report - I think the feature exists, I just cannot find it?"
+MSG-0089,The documentation for the webhook payload lists fields that the real payload does not include.
+MSG-0090,The receipt for last month never arrived in my email - can you resend it?
+MSG-0091,The mobile view overlaps two buttons so I cannot tap either one.
+MSG-0092,"A bulk import from a spreadsheet would save us hours - please add it, there is no importer."
+MSG-0093,The setup guide references a Settings menu that does not exist in the product anymore.
+MSG-0094,My card was declined but I was still billed - please check the payment.
+MSG-0095,Numbers in the chart do not match the numbers in the table for the same period.
+MSG-0096,The help article on two-factor setup skips the step where you scan the code.
+MSG-0097,It would be great if we could schedule reports to email automatically. Please support this.
+MSG-0098,How is the per-seat price calculated on our bill? The total seems off.
+MSG-0099,The help article on two-factor setup skips the step where you scan the code.
+MSG-0100,Where is the option to enable email notifications?
+MSG-0101,I cannot log in because my card expired and the account is suspended for non-payment.
+MSG-0102,How do I share a read-only link to a dashboard?
+MSG-0103,I cannot log in - the page just reloads to the sign-in screen with no error.
+MSG-0104,Saving a record shows a success message but the record is not actually saved.
+MSG-0105,My invoice shows a higher amount than the plan I signed up for - can you explain the charge?
+MSG-0106,We would love a way to clone a project as a template - that option does not exist.
+MSG-0107,Exports are extremely slow now - a file that took seconds takes many minutes.
+MSG-0108,I need to update the credit card on file for the Initech account billing.
+MSG-0109,The link to the migration guide in your docs is dead - it returns a 404.
+MSG-0110,"The dashboard hangs for 30 to 40 seconds before anything appears, then it works."
+MSG-0111,A teammate can see another customer's records in the app - that data should not be visible to us.
+MSG-0112,"The page is sluggish and scrolling stutters, though nothing actually errors."
+MSG-0113,Saving takes ages compared to last week - it eventually completes but very slowly.
+MSG-0114,Got a suspicious message pretending to be your support team asking for my login - is this a scam?
+MSG-0115,Numbers in the chart do not match the numbers in the table for the same period.
+MSG-0116,My two-factor codes are rejected and I am locked out of my own account.
+MSG-0117,The authenticator app is no longer in sync and rejects my codes at login.
+MSG-0118,"Your docs say click Export under Tools, but Export is under File now - the guide is out of date."
+MSG-0119,My invoice shows a higher amount than the plan I signed up for - can you explain the charge?
+MSG-0120,I want a refund for the annual plan I cancelled within the trial window.
+MSG-0121,We need the ability to assign tags to multiple records at once - can you build bulk tagging?
+MSG-0122,"Your docs say click Export under Tools, but Export is under File now - the guide is out of date."
+MSG-0123,"The app becomes unresponsive when we have many users on at once, then recovers."
+MSG-0124,The dashboard renders the totals as NaN instead of the real numbers.
+MSG-0125,I found a session active on a computer that is not mine and cannot explain it.
+MSG-0126,The app throws 'undefined is not a function' when I open the reports tab.
+MSG-0127,Can you add a way to reset two-factor myself? Right now I have to email support every time.
+MSG-0128,Our API key got committed to a public repo by mistake and may be leaked - what do we do?
+MSG-0129,Can you add a Spanish language option? The product is English only at the moment.
+MSG-0130,There is unauthorised access on the Northwind workspace - unfamiliar IP addresses in the audit log.
+MSG-0131,Where is the option to enable email notifications?
+MSG-0132,My session keeps expiring after a minute and I have to log in again and again.
+MSG-0133,My invoice shows a higher amount than the plan I signed up for - can you explain the charge?
+MSG-0134,Everything lags badly in the afternoon - clicks take seconds to register.
+MSG-0135,How do I change the time zone for my account?
+MSG-0136,The app throws 'undefined is not a function' when I open the reports tab.
+MSG-0137,The settings toggle does nothing - it flips back immediately and never saves.
+MSG-0138,I found a session active on a computer that is not mine and cannot explain it.
+MSG-0139,How do I invite a teammate to my workspace?
+MSG-0140,The link to the migration guide in your docs is dead - it returns a 404.
+MSG-0141,The onboarding doc links to a video that has been removed.
+MSG-0142,"The page is sluggish and scrolling stutters, though nothing actually errors."
+MSG-0143,The authenticator app is no longer in sync and rejects my codes at login.
+MSG-0144,The date picker crashes the page whenever I select a range spanning two months.
+MSG-0145,The API reference is missing the parameters for the create-stream call entirely.
+MSG-0146,The single sign-on button does nothing and I have no other way to log in.
+MSG-0147,Exports are extremely slow now - a file that took seconds takes many minutes.
+MSG-0148,Someone accessed our workspace and I can see activity I did not perform. This looks like a compromise.
+MSG-0149,I was promised a discount that is not reflected on my invoice.
+MSG-0150,There is no way to export to PDF right now - can you add that?
+MSG-0151,Where do I find my API key in the settings?
+MSG-0152,Someone accessed our workspace and I can see activity I did not perform. This looks like a compromise.
+MSG-0153,The setup guide references a Settings menu that does not exist in the product anymore.
+MSG-0154,I need to reset my password but the 'forgot password' link is missing from the login page.
+MSG-0155,Can you support webhooks so we can push events to our own system? There is none today.
+MSG-0156,I want a refund for the annual plan I cancelled within the trial window.
+MSG-0157,My session keeps expiring after a minute and I have to log in again and again.
+MSG-0158,We think an attacker is using a stolen credential to reach our data.
+MSG-0159,There is a sign-in from another country on my account that was not me. Please secure it.
+MSG-0160,Where do I find my API key in the settings?
+MSG-0161,Where do I change the default currency display?
+MSG-0162,The setup guide references a Settings menu that does not exist in the product anymore.
+MSG-0163,The password reset link says it has expired every time I click it.
+MSG-0164,There is a charge on my statement from you that I do not recognise on the billing side.
+MSG-0165,"It would help if the calendar supported recurring events, which it currently cannot do."
+MSG-0166,A button in the billing section is broken and throws an error when I click pay.
+MSG-0167,Why did the price go up on my latest invoice compared to last quarter?
+MSG-0168,"It would help if the calendar supported recurring events, which it currently cannot do."
+MSG-0169,"A bulk import from a spreadsheet would save us hours - please add it, there is no importer."
+MSG-0170,The documentation for the webhook payload lists fields that the real payload does not include.
+MSG-0171,Where is the option to enable email notifications?
+MSG-0172,My account password was changed by someone else without my knowledge.
+MSG-0173,Can you add a Spanish language option? The product is English only at the moment.
+MSG-0174,My card was declined but I was still billed - please check the payment.
+MSG-0175,Your getting-started page still shows the old logo and an outdated screenshot.
+MSG-0176,The search box returns results for a query I did not type.
+MSG-0177,The onboarding doc links to a video that has been removed.
+MSG-0178,How do I invite a teammate to my workspace?
+MSG-0179,How do I invite a teammate to my workspace?
+MSG-0180,"The whole app just feels sluggish since this morning, but nothing actually errors."
+MSG-0181,The example in the tutorial does not match what the product actually shows on screen.
+MSG-0182,My account password was changed by someone else without my knowledge.
+MSG-0183,The mobile view overlaps two buttons so I cannot tap either one.
+MSG-0184,We would love a way to clone a project as a template - that option does not exist.
+MSG-0185,The receipt for last month never arrived in my email - can you resend it?
+MSG-0186,Everything lags badly in the afternoon - clicks take seconds to register.
+MSG-0187,The single sign-on button does nothing and I have no other way to log in.
+MSG-0188,I want a refund for the annual plan I cancelled within the trial window.
+MSG-0189,My card was declined but I was still billed - please check the payment.
+MSG-0190,Reports time out with a 504 error every time after about a minute.
+MSG-0191,Please remove the extra user from billing - we are being charged for a seat we do not use.
+MSG-0192,"Switching tabs takes several seconds each time now, it used to be instant."
+MSG-0193,The password reset link says it has expired every time I click it.
+MSG-0194,Your getting-started page still shows the old logo and an outdated screenshot.
+MSG-0195,The example in the tutorial does not match what the product actually shows on screen.
+MSG-0196,The docs claim a limit of 50 but the product enforces 100 - the documentation is wrong.
+MSG-0197,How do I share a read-only link to a dashboard?
+MSG-0198,I received an email asking me to confirm my password by clicking a link - it looks like phishing.
+MSG-0199,We need an API endpoint for invoices - there is no programmatic access to them yet.
+MSG-0200,I was charged twice for this month's subscription and need one charge refunded.
+MSG-0201,The receipt for last month never arrived in my email - can you resend it?
+MSG-0202,Filtering by status returns the wrong rows - it shows cancelled items under active.
+MSG-0203,I changed my email and now cannot sign in with either the old or new address.
+MSG-0204,The link to the migration guide in your docs is dead - it returns a 404.
+MSG-0205,How is the per-seat price calculated on our bill? The total seems off.
+MSG-0206,The date picker crashes the page whenever I select a range spanning two months.
+MSG-0207,"The Northwind workspace crawls during peak hours - heavy lag, no crash."
+MSG-0208,My account password was changed by someone else without my knowledge.
+MSG-0209,"The app becomes unresponsive when we have many users on at once, then recovers."
+MSG-0210,We think an attacker is using a stolen credential to reach our data.
+MSG-0211,There is unauthorised access on the Globex workspace - unfamiliar IP addresses in the audit log.
+MSG-0212,Uploading a CSV produces duplicate entries for every row.
+MSG-0213,"Please add a dark mode, the bright theme is hard on the eyes."
+MSG-0214,"The API responses are very slow today, just delayed, not failing."
+MSG-0215,Two-factor is enabled but I lost my phone - how do I regain access to my own account?
+MSG-0216,I found a session active on a computer that is not mine and cannot explain it.
+MSG-0217,"Loading a large project times out because it is so slow, no error code shown."
+MSG-0218,How can I export my data to CSV?
+MSG-0219,We need an API endpoint for invoices - there is no programmatic access to them yet.
+MSG-0220,The code sample in the guide uses a method name that the SDK no longer has.
+MSG-0221,I want to dispute a charge that does not match the price your docs quote.
+MSG-0222,How do I change the time zone for my account?
+MSG-0223,Two-factor is enabled but I lost my phone - how do I regain access to my own account?
+MSG-0224,The settings toggle does nothing - it flips back immediately and never saves.
+MSG-0225,Please support exporting invoices via API - there is no endpoint for it today.
+MSG-0226,Can you switch our billing from monthly to annual and adjust the invoice?
+MSG-0227,"The API responses are very slow today, just delayed, not failing."
+MSG-0228,There is a charge on my statement from you that I do not recognise on the billing side.
+MSG-0229,The date picker crashes the page whenever I select a range spanning two months.
+MSG-0230,We would love a way to clone a project as a template - that option does not exist.
+MSG-0231,I need to update the credit card on file for the Northwind account billing.
+MSG-0232,"Reports are so slow they eventually time out, no error code, just spinning forever."
+MSG-0233,The settings toggle does nothing - it flips back immediately and never saves.
+MSG-0234,How do I change the time zone for my account?
+MSG-0235,"Add an audit export so we can download the full activity history, which is not possible now."
+MSG-0236,The mobile view overlaps two buttons so I cannot tap either one.
+MSG-0237,"The app becomes unresponsive when we have many users on at once, then recovers."
+MSG-0238,"How do I bulk-delete records? I am sure it is possible, I just cannot find the option."
+MSG-0239,"Add an audit export so we can download the full activity history, which is not possible now."
+MSG-0240,The help article on two-factor setup skips the step where you scan the code.
+MSG-0241,My two-factor code is not arriving by SMS so I cannot complete login.
+MSG-0242,Got a suspicious message pretending to be your support team asking for my login - is this a scam?
+MSG-0243,"Switching tabs takes several seconds each time now, it used to be instant."
+MSG-0244,Uploading a CSV produces duplicate entries for every row.
+MSG-0245,The code sample in the guide uses a method name that the SDK no longer has.
+MSG-0246,I am locked out after too many failed attempts and the unlock link does not work.
+MSG-0247,Can you tell me how to archive an old workspace rather than delete it?
+MSG-0248,Someone logged into my account from another country and changed my billing card on file.
+MSG-0249,The documentation for the webhook payload lists fields that the real payload does not include.
+MSG-0250,"The Globex workspace crawls during peak hours - heavy lag, no crash."
+MSG-0251,The password reset link says it has expired every time I click it.
+MSG-0252,How do I connect the Acme account to the mobile app?
+MSG-0253,Why did the price go up on my latest invoice compared to last quarter?
+MSG-0254,We think an attacker is using a stolen credential to reach our data.
+MSG-0255,There is no way to export to PDF right now - can you add that?
+MSG-0256,Search is painfully slow - it spins for a long time before showing results.
+MSG-0257,The docs claim a limit of 50 but the product enforces 100 - the documentation is wrong.
+MSG-0258,Please remove the extra user from billing - we are being charged for a seat we do not use.
+MSG-0259,Someone accessed our workspace and I can see activity I did not perform. This looks like a compromise.
+MSG-0260,Exports are extremely slow now - a file that took seconds takes many minutes.
+MSG-0261,Saving a record shows a success message but the record is not actually saved.
+MSG-0262,I forgot my password and the reset email never arrives - I just cannot get back in.
+MSG-0263,Why did the price go up on my latest invoice compared to last quarter?
+MSG-0264,It would be great if we could schedule reports to email automatically. Please support this.
+MSG-0265,"Please add a dark mode, the bright theme is hard on the eyes."
+MSG-0266,I forgot my password and the reset email never arrives - I just cannot get back in.
+MSG-0267,I was double-charged - please refund one of the charges.
+MSG-0268,"The dashboard hangs for 30 to 40 seconds before anything appears, then it works."
+MSG-0269,We need the ability to assign tags to multiple records at once - can you build bulk tagging?
+MSG-0270,I cannot log in - the page just reloads to the sign-in screen with no error.
+MSG-0271,Saving a record shows a success message but the record is not actually saved.
+MSG-0272,My two-factor code is not arriving by SMS so I cannot complete login.
+MSG-0273,Deleting an item removes the wrong item from the list.
+MSG-0274,The docs claim a limit of 50 but the product enforces 100 - the documentation is wrong.
+MSG-0275,"Loading a large project times out because it is so slow, no error code shown."
+MSG-0276,Your getting-started page still shows the old logo and an outdated screenshot.
+MSG-0277,Please give us role-based permissions - right now everyone has the same access.
+MSG-0278,The dashboard renders the totals as NaN instead of the real numbers.
+MSG-0279,There is unauthorised access on the Umbra workspace - unfamiliar IP addresses in the audit log.
+MSG-0280,The pricing in your documentation does not match my invoice - which is right?
+MSG-0281,Uploading a CSV produces duplicate entries for every row.
+MSG-0282,Where do I change the default currency display?
+MSG-0283,The invoices page is so slow it takes two minutes to show my charges.
+MSG-0284,"An old employee still has access and is logging in after leaving - please revoke it, this is a security issue."
+MSG-0285,The pricing explanation in the docs contradicts what the billing page says - the doc is unclear.
+MSG-0286,Search is painfully slow - it spins for a long time before showing results.
+MSG-0287,I received an email asking me to confirm my password by clicking a link - it looks like phishing.
+MSG-0288,There is a sign-in from another country on my account that was not me. Please secure it.
+MSG-0289,The export button throws an error 500 every single time I click it.
+MSG-0290,There is a sign-in from another country on my account that was not me. Please secure it.
+MSG-0291,How can I export my data to CSV?
+MSG-0292,Filtering by status returns the wrong rows - it shows cancelled items under active.
+MSG-0293,A teammate can see another customer's records in the app - that data should not be visible to us.
+MSG-0294,"Add an audit export so we can download the full activity history, which is not possible now."
+MSG-0295,There is a charge on my statement from you that I do not recognise on the billing side.
+MSG-0296,My account is locked and the support article on unlocking does not help me get in.
+MSG-0297,I forgot my password and the reset email never arrives - I just cannot get back in.
+MSG-0298,"The reports page takes over a minute to load lately, no error, it is just very slow."
+MSG-0299,Deleting an item removes the wrong item from the list.
+MSG-0300,I changed my email and now cannot sign in with either the old or new address.
+MSG-0301,I was charged twice for this month's subscription and need one charge refunded.
+MSG-0302,I just got an alert about a login from a device I do not recognise - I think someone else is in my account.

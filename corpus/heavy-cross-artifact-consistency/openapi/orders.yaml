@@ -1,0 +1,98 @@
+openapi: 3.0.3
+info:
+  title: Northwind Orders API
+  version: "1.0.0"
+  description: >
+    Order management for Globex. The customer_ref field is a string today;
+    CR-4471 renames it to customer_id and retypes it to a 64-bit integer.
+paths:
+  /orders:
+    post:
+      summary: Create an order
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+            example:
+              order_ref: "ord_5589"
+              customer_ref: "cust_00417"
+              currency: "USD"
+              line_items:
+                - sku: "WIDGET-1"
+                  quantity: 2
+                  unit_price_minor: 1999
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /orders/by-customer/{customer_ref}:
+    get:
+      summary: List orders for a customer
+      operationId: getOrdersForCustomer
+      parameters:
+        - name: customer_ref
+          in: path
+          required: true
+          description: >
+            Customer identity. CR-4471 renames this path parameter to customer_id
+            and retypes it to integer (format int64).
+          schema:
+            type: string
+            pattern: "^cust_\\d{5}$"
+          example: "cust_00417"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+components:
+  schemas:
+    OrderInput:
+      type: object
+      required: [order_ref, customer_ref, status, currency]
+      properties:
+        order_ref:
+          type: string
+          pattern: "^ord_\\d{4}$"
+        customer_ref:
+          type: string
+          pattern: "^cust_\\d{5}$"
+          example: "cust_00417"
+        currency:
+          type: string
+        line_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+    Order:
+      allOf:
+        - $ref: '#/components/schemas/OrderInput'
+        - type: object
+          properties:
+            status:
+              type: string
+              enum: [draft, placed, fulfilled, cancelled]
+            total_minor:
+              type: integer
+    LineItem:
+      type: object
+      required: [sku, quantity, unit_price_minor]
+      properties:
+        sku:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        unit_price_minor:
+          type: integer
+          minimum: 0

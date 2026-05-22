@@ -1,4 +1,4 @@
-# STAN_STATE.md - Framework Long-Term Memory
+# GAUNTLET_QUEUE.md - Framework Long-Term Memory
 
 This is the trunk. It is the framework's persistent memory of what it has done,
 what is queued, and where results were sent. The `/eval-run` orchestrator reads
@@ -55,10 +55,22 @@ One row per eval the framework can run. `status` is one of: `queued` (not yet ru
 | 22 | 22-cross-reference-completeness | cross-reference-completeness | corpus/cross-reference-completeness/ | queued |
 | 23 | 23-multi-constraint-satisfaction | multi-constraint-satisfaction | corpus/multi-constraint-satisfaction/ | queued |
 | 24 | 24-high-stakes-zero-error | high-stakes-zero-error | corpus/high-stakes-zero-error/ | queued |
+| 25 | 25-cross-reference-completeness-at-scale | cross-reference-completeness-at-scale | corpus/cross-reference-completeness-at-scale/ | queued |
+| 26 | 26-heavy-research-v2 | heavy-research | corpus/heavy-research-v2/ | queued |
+| 27 | 27-completeness-under-conflict | completeness-under-conflict | corpus/completeness-under-conflict/ | queued |
+| 28 | 28-heavy-multi-constraint-at-scale | multi-constraint-satisfaction | corpus/heavy-multi-constraint-at-scale/ | queued |
+| 29 | 29-heavy-long-horizon-instruction-following | instruction-following | corpus/heavy-long-horizon-instruction-following/ | queued |
+| 30 | 30-heavy-cross-artifact-consistency | cross-artifact-consistency | corpus/heavy-cross-artifact-consistency/ | queued |
+| 31 | 31-heavy-codebase-comprehension | codebase-comprehension | corpus/heavy-codebase-comprehension/ | queued |
+| 32 | 32-heavy-long-context-retrieval | long-context-retrieval | corpus/heavy-long-context-retrieval/ | queued |
+| 33 | 33-heavy-multi-doc-consolidation | multi-doc-consolidation | corpus/heavy-multi-doc-consolidation/ | queued |
+| 34 | 34-heavy-data-transformation | heavy-data-transformation | corpus/heavy-data-transformation/ | queued |
+| 35 | 35-heavy-translation | heavy-translation | corpus/heavy-translation/ | queued |
+| 36 | 36-heavy-classification | heavy-classification | corpus/heavy-classification/ | queued |
 
 <!-- Seeded by the EXAMPLE-eval + queue dispatch (2026-05-21). Each row points at a
      spec file in specs/NN-slug.md and a corpus path under corpus/. Minimum batch
-     size for a run is 5 - the queue holds 7 queued evals. Spec 01 is the priority
+     size for a run is 5 - the queue holds 24 queued evals. Spec 01 is the priority
      probe (the 40-thread scale-cranked consolidation eval). Specs 02 and 03 are
      higher-N reruns (N=3) of stable task types to crush the within-model noise
      floor. Specs 04 through 07 are new task types. The static teaching reference
@@ -83,30 +95,19 @@ The slugs the next `/eval-run` will process, in order. Minimum 5 (fewer only if
 fewer than 5 remain queued). The orchestrator pulls from here; if this section is
 empty it falls back to the first 5 `queued` rows in the Eval queue.
 
-1. `01-large-scale-consolidation` (priority probe - the 40-thread scale-threshold eval)
-2. `02-rerun-multi-file-synthesis` (N=3 noise-floor rerun)
-3. `03-rerun-verbatim-capture` (N=3 noise-floor rerun)
-4. `04-cross-language-migration` (new task type - Python to Go)
-5. `05-automated-diff-review` (new task type - PR diff review)
-6. `06-text-to-sql` (new task type - NL to SQL)
-7. `07-codebase-qa` (new task type - multi-file code comprehension)
-8. `08-multi-doc-consolidation` (multi-file dimension probe - 15 docs, 3 cross-doc conflicts)
-9. `09-heavy-research` (heavy multi-source synthesis - 16 sources, 2 reliability traps)
-10. `10-greenfield-code-gen` (new task type - spec-to-implementation)
-11. `11-bug-fix-from-stacktrace` (new task type - root-cause debugging)
-12. `12-test-generation` (new task type - pytest suite authoring)
-13. `13-structured-extraction` (new task type - messy notes to JSON)
-14. `14-long-context-retrieval` (new task type - cite-the-section QA)
-15. `15-summarization-under-constraint` (new task type - 150-word hard cap)
-16. `16-ambiguity-resolution` (new task type - under-specified ticket)
-17. `17-data-reshaping` (new task type - flat CSV to nested JSON)
-18. `18-regex-parser-building` (new task type - custom log format parser)
-19. `19-tone-voice-rewrite` (new task type - blunt to diplomatic)
-20. `20-logic-math-reasoning` (new task type - scheduling puzzle)
-21. `21-api-usage-correctness` (new task type - SDK-constrained function)
-22. `22-cross-reference-completeness` (new task type - migration checklist)
-23. `23-multi-constraint-satisfaction` (new task type - 12-constraint refactor)
-24. `24-high-stakes-zero-error` (new task type - 7-artifact consistency)
+1. `18-regex-parser-building` (new task type - custom log format parser)
+2. `25-cross-reference-completeness-at-scale` (heavy - scaled cross-reference completeness)
+3. `26-heavy-research-v2` (heavy - multi-source research v2)
+4. `27-completeness-under-conflict` (heavy - completeness under conflicting sources)
+5. `28-heavy-multi-constraint-at-scale` (heavy - scaled multi-constraint satisfaction)
+6. `29-heavy-long-horizon-instruction-following` (heavy - long-horizon instruction following)
+7. `30-heavy-cross-artifact-consistency` (heavy - cross-artifact consistency)
+8. `31-heavy-codebase-comprehension` (heavy - codebase comprehension)
+9. `32-heavy-long-context-retrieval` (heavy - long-context retrieval)
+10. `33-heavy-multi-doc-consolidation` (heavy - multi-doc consolidation)
+11. `34-heavy-data-transformation` (heavy - data transformation)
+12. `35-heavy-translation` (heavy - translation)
+13. `36-heavy-classification` (heavy - classification)
 
 ---
 

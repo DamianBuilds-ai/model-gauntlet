@@ -6,9 +6,8 @@ This reveal is what turns sealed scores into a model-attributed tally. In this
 EXAMPLE folder the key is shown so a reader can see the full shape end to end.
 
 This is a REDUCED-N example pool of 6 variants (A through F). The production
-default is the full 12-variant pool (Haiku low/medium/high, Sonnet
-low/medium/high/max, Opus low/medium/high/xhigh/max). Six is used here so the
-reference stays legible.
+default is the 9-variant model-only pool (Haiku x3, Sonnet x3, Opus x3). Six is
+used here so the reference stays legible.
 
 | Label | Model | Effort | Relative cost (illustrative, vs Haiku low = 1x) |
 |-------|-------|--------|--------------------------------------------------|

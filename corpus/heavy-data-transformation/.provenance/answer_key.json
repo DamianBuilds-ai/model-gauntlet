@@ -1,0 +1,225 @@
+{
+  "entities": [
+    {
+      "entity": "Acme",
+      "departments": [
+        {
+          "department": "engineering",
+          "projects": [
+            {
+              "project_code": "ENG-DATA",
+              "total_usd": 40978.8,
+              "approved_count": 18,
+              "pending_count": 3,
+              "rejected_count": 4
+            }
+          ]
+        },
+        {
+          "department": "operations",
+          "projects": [
+            {
+              "project_code": "OPS-WARE",
+              "total_usd": 50782.89,
+              "approved_count": 18,
+              "pending_count": 4,
+              "rejected_count": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "Cardinal",
+      "departments": [
+        {
+          "department": "marketing",
+          "projects": [
+            {
+              "project_code": "MKT-PERF",
+              "total_usd": 40284.31,
+              "approved_count": 17,
+              "pending_count": 4,
+              "rejected_count": 4
+            }
+          ]
+        },
+        {
+          "department": "research",
+          "projects": [
+            {
+              "project_code": "RES-LABS",
+              "total_usd": 25134.56,
+              "approved_count": 18,
+              "pending_count": 4,
+              "rejected_count": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "Globex",
+      "departments": [
+        {
+          "department": "marketing",
+          "projects": [
+            {
+              "project_code": "MKT-PERF",
+              "total_usd": 44388.45,
+              "approved_count": 18,
+              "pending_count": 3,
+              "rejected_count": 4
+            }
+          ]
+        },
+        {
+          "department": "research",
+          "projects": [
+            {
+              "project_code": "RES-LABS",
+              "total_usd": 27487.12,
+              "approved_count": 18,
+              "pending_count": 4,
+              "rejected_count": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "Initech",
+      "departments": [
+        {
+          "department": "marketing",
+          "projects": [
+            {
+              "project_code": "MKT-PERF",
+              "total_usd": 43054.1,
+              "approved_count": 18,
+              "pending_count": 4,
+              "rejected_count": 3
+            }
+          ]
+        },
+        {
+          "department": "research",
+          "projects": [
+            {
+              "project_code": "RES-LABS",
+              "total_usd": 25950.0,
+              "approved_count": 18,
+              "pending_count": 3,
+              "rejected_count": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "Northwind",
+      "departments": [
+        {
+          "department": "engineering",
+          "projects": [
+            {
+              "project_code": "ENG-API",
+              "total_usd": 41768.76,
+              "approved_count": 18,
+              "pending_count": 4,
+              "rejected_count": 3
+            }
+          ]
+        },
+        {
+          "department": "operations",
+          "projects": [
+            {
+              "project_code": "OPS-WARE",
+              "total_usd": 54306.52,
+              "approved_count": 18,
+              "pending_count": 3,
+              "rejected_count": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entity": "Umbra",
+      "departments": [
+        {
+          "department": "engineering",
+          "projects": [
+            {
+              "project_code": "ENG-WEB",
+              "total_usd": 38204.28,
+              "approved_count": 18,
+              "pending_count": 4,
+              "rejected_count": 3
+            }
+          ]
+        },
+        {
+          "department": "operations",
+          "projects": [
+            {
+              "project_code": "OPS-WARE",
+              "total_usd": 43683.63,
+              "approved_count": 18,
+              "pending_count": 3,
+              "rejected_count": 4
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "quarantine": [
+    {
+      "txn_id": "TX1001",
+      "reason": "duplicate_txn_id"
+    },
+    {
+      "txn_id": "TX9007",
+      "reason": "invalid_date"
+    },
+    {
+      "txn_id": "TX9006",
+      "reason": "invalid_status"
+    },
+    {
+      "txn_id": "TX9005",
+      "reason": "missing_entity"
+    },
+    {
+      "txn_id": "TX9002",
+      "reason": "negative_amount"
+    },
+    {
+      "txn_id": "TX9004",
+      "reason": "project_department_mismatch"
+    },
+    {
+      "txn_id": "TX9003",
+      "reason": "unknown_currency"
+    },
+    {
+      "txn_id": "TX9001",
+      "reason": "unparseable_amount"
+    },
+    {
+      "txn_id": "TX9009",
+      "reason": "unparseable_amount"
+    },
+    {
+      "txn_id": "TX9010",
+      "reason": "unparseable_amount"
+    }
+  ],
+  "_meta": {
+    "total_rows_in_csv": 310,
+    "valid_rows": 300,
+    "quarantined_rows": 10
+  }
+}

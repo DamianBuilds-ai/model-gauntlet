@@ -1,8 +1,8 @@
 # model-gauntlet
 
-A reproducible method for empirically picking the right Claude model + effort level for each agent task class. Pits 12 model + effort variants against the same prompt with sealed identity scoring, produces evidence-backed routing decisions for Scout / Analyst / Builder / Scribe / Engineer / Researcher / Architect agent tiers.
+A reproducible method for empirically picking the right Claude model for each agent task class. Pits 9 model variants (Haiku x3, Sonnet x3, Opus x3) against the same prompt with sealed identity scoring, produces evidence-backed routing decisions for Scout / Analyst / Builder / Scribe / Engineer / Researcher / Architect agent tiers.
 
-Built in a single-day arc (2026-05-19) by Damian Yazbeck using Claude Code, with 10 completed evals on the board at v1.4 lock. The first day's evidence is included in [EVIDENCE.md](EVIDENCE.md) - not "the method works trust me," but "here is what we found in N=10 evals."
+Built in a single-day arc (2026-05-19) by Damian Yazbeck using Claude Code, with 10 completed evals captured in [EVIDENCE.md](EVIDENCE.md) at the v1.4 evidence cut, and a battery of model-only specs now seeded for v1.5 runs. The first day's evidence is not "the method works trust me," but "here is what we found in N=10 evals."
 
 ---
 
@@ -32,6 +32,10 @@ need to understand the method internals.
 If a run is interrupted, just type `/eval-run` again - it resumes safely and never
 double-sends. Full operator guide: [docs/starting-prompt.md](docs/starting-prompt.md).
 
+The eval queue and run state live in [GAUNTLET_QUEUE.md](GAUNTLET_QUEUE.md) - that is the list
+of evals to run plus which ones have been completed. Check it to see what is next and
+what is already done.
+
 The rest of this README explains what the framework is and how the method works -
 useful if you curate the eval queue, not required if you just run batches.
 
@@ -41,9 +45,9 @@ useful if you curate the eval queue, not required if you just run batches.
 
 Three things in one method:
 
-- **A 12-variant pool** (Haiku low/medium/high + Sonnet low/medium/high/max + Opus low/medium/high/xhigh/max) so every model x every effort gets pitted on the same prompt.
+- **A 9-variant pool** (Haiku x3, Sonnet x3, Opus x3 - model-only, three variance reruns per model) so every model gets pitted on the same prompt with a mean-of-3 to damp single-run variance. Effort is not a dispatch dimension - the Agent tool pins `model:` only.
 - **A 9-dimension scoring rubric** plus a binary instruction-following gate plus three mandatory bias controls (sealed identity, dim-by-dim scoring, length disclosure).
-- **A four-phase execution flow** (pre-flight, parallel variant dispatch, Architect Pass 1 sealed scoring, Architect Pass 2/3 reveal + cost-adjust + tally) that produces a paste-ready decision block.
+- **A four-phase execution flow** (pre-flight, parallel variant dispatch from the main session at depth 1, Architect Pass 1 sealed scoring, Architect Pass 2/3 reveal + cost-adjust + tally) that produces a paste-ready decision block.
 
 Output of any run is a `tally.md` per eval folder with weighted scores, a Scoreboard row per task category, and a recommendation that either confirms or refutes the model assigned to that task class in your agent system.
 
@@ -59,30 +63,27 @@ Most teams making decisions about which Claude model to use for which task fall 
 
 Both modes share a deeper problem: **opinion as evidence.** "I think Opus is better for this." "I've heard Haiku struggles here." No measurement, no bias controls, no comparable scoring across runs.
 
-This method flips it from opinion to empirical signal. You define a task. You pit every model + effort variant against it. You score sealed (model identity hidden). You compute weighted totals + apply cost-override thresholds. You get a winner per quality and a winner per practical (cost-adjusted) call.
+This method flips it from opinion to empirical signal. You define a task. You pit every model variant against it. You score sealed (model identity hidden). You compute weighted totals + apply cost-override thresholds. You get a winner per quality and a winner per practical (cost-adjusted) call.
 
 Same posture as A/B testing for product features. The difference: the framework standardizes the structure so results compose across evals and across teams.
 
 ---
 
-## The 12-variant pool
+## The 9-variant pool
 
-| # | Model | Effort | Pool position |
-|---|-------|--------|---------------|
-| 1 | Haiku 4.5 | low | A |
-| 2 | Haiku 4.5 | medium | B |
-| 3 | Haiku 4.5 | high | C |
-| 4 | Sonnet 4.6 | low | D |
-| 5 | Sonnet 4.6 | medium | E |
-| 6 | Sonnet 4.6 | high | F |
-| 7 | Sonnet 4.6 | max | G |
-| 8 | Opus 4.7 | low | H |
-| 9 | Opus 4.7 | medium | I |
-| 10 | Opus 4.7 | high | J |
-| 11 | Opus 4.7 | xhigh | K (unique to Opus 4.7) |
-| 12 | Opus 4.7 | max | L |
+| Label | Model | Run | Notes |
+|-------|-------|-----|-------|
+| A | Haiku 4.5 | 1 | |
+| B | Haiku 4.5 | 2 | variance run |
+| C | Haiku 4.5 | 3 | variance run |
+| D | Sonnet 4.6 | 1 | |
+| E | Sonnet 4.6 | 2 | variance run |
+| F | Sonnet 4.6 | 3 | variance run |
+| G | Opus 4.7 | 1 | |
+| H | Opus 4.7 | 2 | variance run |
+| I | Opus 4.7 | 3 | variance run |
 
-Labels A through L are **randomly assigned per eval** (sealed in `variants/key.md`, NOT opened until Pass 2 of scoring). Reduced N (3-6 variants) is allowed when targeting a specific question (e.g., "is Sonnet high enough or do I need Opus?"). v1.4 default is the full spectrum for no-gaps comparison.
+Labels A through I are **randomly assigned per eval** (sealed in `variants/key.md`, NOT opened until Pass 2 of scoring). The per-model score is the mean of its 3 reruns. Effort is not a current dispatch dimension - the Agent tool pins `model: haiku|sonnet|opus` only, so same-model/different-effort variants produced functionally identical outputs and added noise without signal. Reduced N (fewer reruns, or dropping a model) is allowed when targeting a specific question (e.g., "is Sonnet enough or do I need Opus?"). v1.5 default is the full 9-variant model-only pool.
 
 ---
 
@@ -91,7 +92,7 @@ Labels A through L are **randomly assigned per eval** (sealed in `variants/key.m
 | Phase | What happens |
 |-------|--------------|
 | **Phase 0** | Pre-flight validation. Confirm data-source paths exist. Clone long-lived reference files to `.bak-archive/`. Validate `corpus_intent` vs `corpus_delivered`. |
-| **Phase 1** | Stage eval folder + dispatch all 12 variant agents in parallel (background). Each writes to `variants/{LABEL}.md` with sealed identity. |
+| **Phase 1** | Stage eval folder + dispatch all 9 variant agents in parallel (background) FROM THE MAIN SESSION (depth 1). Each writes to `variants/{LABEL}.md` with sealed identity. |
 | **Phase 2** | Architect Pass 1 - sealed scoring across 9 dimensions, dimension-by-dimension, plus binary instruction-following gate. Length disclosure mandatory. |
 | **Phase 3** | Architect Pass 2/3 - open `key.md`, compute weighted totals, apply within-family tiebreaker, apply N >= 3 protocol for bottom-quartile, apply cost-override thresholds, write tally. |
 | **Phase 4** | Output paste-ready return prompt for origin chat with Headline + per-dimension highlights + cost-adjusted decision + staged proposals for long-lived reference file updates. |
@@ -100,9 +101,9 @@ Full method spec: [METHOD.md](METHOD.md). Cross-eval findings from the first 10 
 
 ---
 
-## Quick start
+## Quick start (manual / curator path)
 
-If you have Claude Code with agent infrastructure (Task tool, slash commands), you can deploy and run evals tonight.
+This is the path for integrating the method into your OWN project, rather than running the Stan batch flow in the operator Quickstart above. If you have Claude Code with agent infrastructure (Task tool, slash commands), you can deploy and run evals tonight.
 
 ```bash
 # 1. Clone the repo
@@ -137,13 +138,13 @@ If you don't have Claude Code, see the **lite path** in [METHOD.md section 7](ME
 
 ## Headline findings from N=10 evals
 
-Confirmed at high confidence across the first day's dataset:
+Confirmed at high confidence across the first day's dataset. These findings come from the v1.4-era N=10 dataset, when the pool still carried effort labels; the effort references below are historical and describe that pool, not current dispatch mechanics (v1.5 drops the effort axis entirely - these results are part of why).
 
 - **Practical winner is Haiku 4.5 in 7/10 evals, Sonnet 4.6 in 2/10, Opus 4.7 in 0/10.** Task type tracks the routing floor before task difficulty does.
-- **Opus 4.7 xhigh effort: 0-for-10 practical wins.** Effort tax (verbosity, over-elaboration) without quality buy. Retire from default routing.
-- **Within-family inversion for Haiku 4.5: low > high on bounded tasks.** Three distinct failure modes for Haiku high.
+- **Opus 4.7 at its highest effort tier (v1.4-era xhigh runs): 0-for-10 practical wins.** Effort tax (verbosity, over-elaboration) without quality buy.
+- **Within-family inversion for Haiku 4.5: low > high on bounded tasks (v1.4-era effort runs).** Three distinct failure modes for Haiku high.
 - **Sonnet 4.6 structural dominance.** Wins layout / parallelism / shape tasks (eval #12 ASCII diagram authoring: top 3 spots all Sonnet).
-- **Haiku discipline for verbatim retrieval CONFIRMED.** Eval #11 five-way tie at 5.0/5.0 between Haiku high, Sonnet max, Opus low/medium/xhigh; Haiku high wins practical via 15x cost-override.
+- **Haiku discipline for verbatim retrieval CONFIRMED.** Eval #11 five-way tie at 5.0/5.0 between Haiku high, Sonnet max, Opus low/medium/xhigh (v1.4-era effort variants); Haiku high wins practical via 15x cost-override.
 
 Full evidence dossier: [EVIDENCE.md](EVIDENCE.md).
 
@@ -154,7 +155,7 @@ Full evidence dossier: [EVIDENCE.md](EVIDENCE.md).
 ```
 model-gauntlet/
 |-- README.md                    # This file
-|-- STAN_STATE.md                # Framework memory trunk - read at every run start
+|-- GAUNTLET_QUEUE.md                # Framework memory trunk - read at every run start
 |-- METHOD.md                    # Methodology spec (the load-bearing doc)
 |-- EVIDENCE.md                  # N=10 cross-eval findings
 |-- BLUEPRINTS.md                # Codename catalog (eval-N-pit is the conversational form)
@@ -163,8 +164,9 @@ model-gauntlet/
 |-- commands/
 |   |-- eval-run.md              # Batch orchestrator - the ONE command operators type
 |   `-- eval-pit.md              # Single-eval four-phase runner (wrapped as a sub-agent)
-|-- specs/                       # One file per eval to run (curated; operators do not edit)
-|   `-- .gitkeep                 # real specs seeded by the queue dispatch
+|-- specs/                       # Seeded eval battery, one file per eval (curated; operators do not edit)
+|   |-- 01-large-scale-consolidation.md  # a seeded eval battery - the live run queue is in GAUNTLET_QUEUE.md
+|   `-- ... (one spec file per eval; the run queue lives in GAUNTLET_QUEUE.md)
 |-- corpus/                      # Sanitized public inputs the specs point at
 |   `-- .gitkeep
 |-- rubric/
@@ -175,6 +177,7 @@ model-gauntlet/
 |   `-- .gitkeep
 |-- scripts/
 |   |-- send-eval.sh             # Per-eval incremental send (commit specific files + push + notify)
+|   |-- send-telegram-doc.sh     # Ship a single result doc to the Telegram return channel
 |   |-- preflight.sh             # Corpus-path check + private-content guard
 |   |-- setup-return-channel.sh  # One-time Telegram setup (or skip to git-only)
 |   `-- send-and-clean.sh        # Recovery flush (fallback only)

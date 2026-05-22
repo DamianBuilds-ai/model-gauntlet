@@ -104,16 +104,16 @@ does the same thing:
 
 ```
 Run the /eval-run orchestrator from this repo (commands/eval-run.md).
-Read STAN_STATE.md, do the one-time return-channel setup only if config/return-channel.env
+Read GAUNTLET_QUEUE.md, do the one-time return-channel setup only if config/return-channel.env
 is missing, run scripts/preflight.sh, then run the next batch of at least 5 queued
 evals one at a time. After EACH eval finishes, ship it with
-scripts/send-eval.sh <NN-slug> <run-branch>, update STAN_STATE.md, wipe that eval's
+scripts/send-eval.sh <NN-slug> <run-branch>, update GAUNTLET_QUEUE.md, wipe that eval's
 files from outbox/, and move to the next. send-eval.sh auto-selects the delivery mode:
 if a Telegram bot token + chat id are configured in config/return-channel.env it sends
 each result file to the Telegram chat as a document (no git push, pass run/telegram as
 the branch arg); otherwise it pushes to a single run/<timestamp> branch (never master).
 At the end, print the run branch name (git mode) or confirm delivery to Telegram (telegram
-mode) so I can pass the result to Damian. Confine all writes to outbox/ and STAN_STATE.md,
+mode) so I can pass the result to Damian. Confine all writes to outbox/ and GAUNTLET_QUEUE.md,
 never commit the Telegram token, and reap all child processes at the end.
 ```
 

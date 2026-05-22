@@ -46,10 +46,10 @@ Full reasoning is in `tally.md`.
 ## Reduced-N note
 
 This pool is **6 variants (A-F)**, a reduced-N example chosen for legibility. The
-production default is the full **12-variant pool** (Haiku low/medium/high, Sonnet
-low/medium/high/max, Opus low/medium/high/xhigh/max). Reduced-N is a legitimate mode
-when targeting a specific question; here it keeps the reference readable. The cost
-multipliers in `variants/key.md` are illustrative placeholders, not live pricing.
+production default is the **9-variant model-only pool** (Haiku x3, Sonnet x3, Opus x3).
+Reduced-N is a legitimate mode when targeting a specific question; here it keeps the
+reference readable. The cost multipliers in `variants/key.md` are illustrative
+placeholders, not live pricing.
 
 ## This is a reference, NOT a live run target
 
@@ -58,4 +58,4 @@ orchestrator. Live runs are driven by lightweight `specs/NN-slug.md` definition 
 that point at `corpus/` inputs; each run writes transient results to `outbox/` and ships
 them via `scripts/send-eval.sh` to a `run/<timestamp>` branch. To author a runnable eval,
 add a spec under `specs/` and a corpus under `corpus/`, not a folder like this one. See
-`commands/eval-run.md` and `STAN_STATE.md`.
+`commands/eval-run.md` and `GAUNTLET_QUEUE.md`.

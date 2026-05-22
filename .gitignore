@@ -40,3 +40,7 @@ node_modules/
 
 # local-only private needles for the pre-push guard
 .preflight-needles
+
+# Corpus test data is sealed public input - un-ignore log/env files inside corpus/
+!corpus/**/*.log
+!corpus/**/.env*

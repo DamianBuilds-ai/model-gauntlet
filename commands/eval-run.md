@@ -33,7 +33,7 @@ The orchestrator AND every sub-agent it spawns (variant sub-agents + the
 consolidator sub-agent) write ONLY to two locations:
 
 - `outbox/` (transient per-eval working files - tally + scores)
-- `STAN_STATE.md` (the framework memory trunk, written by the orchestrator only)
+- `GAUNTLET_QUEUE.md` (the framework memory trunk, written by the orchestrator only)
 
 Nothing else is read or written outside this repo. No access to Stan's other files,
 no permanent files, no home directory, no system paths. The consolidator sub-agent
@@ -63,7 +63,7 @@ grader or shell processes are left running on Stan's machine.
 
 ### 1. Read the framework memory
 
-Read `STAN_STATE.md`. Learn: which evals are `done`, which are `queued`, what the
+Read `GAUNTLET_QUEUE.md`. Learn: which evals are `done`, which are `queued`, what the
 Next batch is, and the Run history. This is how the framework knows what it has
 already shipped and what comes next.
 
@@ -101,7 +101,7 @@ Run the preflight gate:
 ```
 !bash scripts/preflight.sh <corpus-path-1> <corpus-path-2> ...
 ```
-Pass the corpus path of every eval in the batch (from STAN_STATE / the spec files).
+Pass the corpus path of every eval in the batch (from GAUNTLET_QUEUE / the spec files).
 Preflight does two things: (a) validates every corpus path exists on disk, and
 (b) runs the private-content guard over `outbox/`, `specs/`, `corpus/`. If preflight
 exits non-zero, HALT and relay its plain-English message to Stan verbatim (e.g.
@@ -110,14 +110,14 @@ dispatch any eval until preflight passes.
 
 ### 4. Determine the batch
 
-From STAN_STATE, take the Next batch slugs (or, if Next batch is empty, the first
+From GAUNTLET_QUEUE, take the Next batch slugs (or, if Next batch is empty, the first
 `queued` rows in the Eval queue). The batch is the next **>= 5** queued evals
 (fewer only if fewer than 5 remain queued).
 
 Before building the batch, check `outbox/`: if it is non-empty at the start of a
 run, WARN Stan in plain English - "the previous run did not finish shipping (files
 left in outbox/). Re-run to resume, or clear outbox/ first." A resumed run skips
-evals already marked `done` in STAN_STATE (step 8), so resuming is safe.
+evals already marked `done` in GAUNTLET_QUEUE (step 8), so resuming is safe.
 
 ### 5. Create the run branch (ONCE per run, git-push mode only)
 
@@ -180,10 +180,10 @@ a self-simulated run is invalid data.
 
 Either way the result is delivered the moment the eval finishes.
 
-**c. Update STAN_STATE.md.** Mark the slug `done` in the Eval queue, add a row to
+**c. Update GAUNTLET_QUEUE.md.** Mark the slug `done` in the Eval queue, add a row to
 Completed (slug | run branch | date sent | quality winner | practical winner -
 pulled from the tally headline). This is the orchestrator's job; do it now, not at
-the end. (See "Editing STAN_STATE" below.)
+the end. (See "Editing GAUNTLET_QUEUE" below.)
 
 **d. Wipe that eval's transient files from outbox.** Delete `outbox/NN-slug.tally.md`
 and `outbox/NN-slug.scores.md` locally:
@@ -206,7 +206,7 @@ After the last eval ships:
   processes). The shell scripts each carry their own `trap ... kill $(jobs -p) EXIT`;
   the orchestrator additionally confirms no background jobs remain before declaring
   the run complete.
-- Append a line to STAN_STATE Run history (`run/<timestamp>` or `telegram` + eval
+- Append a line to GAUNTLET_QUEUE Run history (`run/<timestamp>` or `telegram` + eval
   count + date).
 - Print the result plainly for Stan:
   - **git-push mode:** the run branch name, e.g.
@@ -224,7 +224,7 @@ After the last eval ships:
 ### 8. Resumability
 
 If a run was interrupted (laptop closed, network drop), Stan just types `/eval-run`
-again. The orchestrator reads STAN_STATE, sees which slugs are already `done`, and
+again. The orchestrator reads GAUNTLET_QUEUE, sees which slugs are already `done`, and
 SKIPS them - no duplicate work, no double-shipping. It resumes the same batch from
 the first not-yet-done slug. Because each eval is shipped + recorded the moment it
 finishes (steps 6b and 6c), at most one eval's work is ever in flight when an
@@ -253,7 +253,7 @@ Corpus / data source: [corpus path from the spec]
 Rules:
 - Answer the prompt as written. Do NOT mention your model, effort, or cost.
 - Write your answer to YOUR OWN scratch only (the main session collects it). Do NOT
-  write to outbox/, STAN_STATE.md, or any repo file.
+  write to outbox/, GAUNTLET_QUEUE.md, or any repo file.
 - Universal output envelope (schemaVersion: 1, tier, status, tool_budget_used).
 - NO em dashes (spaced hyphens), NO emojis. Sequential processing if multi-item.
 ```
@@ -298,7 +298,7 @@ HARD WRITE CONSTRAINT (sandbox - non-negotiable):
     outbox/NN-slug.tally.md     (the headline result + the two winners)
     outbox/NN-slug.scores.md    (the sealed-scoring audit trail)
 - Any attempt to write ANY other path (home dir, system paths, other repo files,
-  STAN_STATE.md) = STOP and return scope-exceeded. The orchestrator owns STAN_STATE,
+  GAUNTLET_QUEUE.md) = STOP and return scope-exceeded. The orchestrator owns GAUNTLET_QUEUE,
   not you.
 
 The tally headline MUST contain two clearly labelled lines the send script can grep:
@@ -318,13 +318,13 @@ a self-simulated run is invalid data.
 
 ---
 
-## Editing STAN_STATE during a run
+## Editing GAUNTLET_QUEUE during a run
 
 The orchestrator (this command, in the main run context) is the ONLY writer of
-STAN_STATE.md during a run. Variant and consolidator sub-agents never touch it.
+GAUNTLET_QUEUE.md during a run. Variant and consolidator sub-agents never touch it.
 After each eval ships,
 update three things: flip the slug to `done` in the Eval queue, add the Completed
-row, and (at run end) append the Run history line. Never hand-edit STAN_STATE while
+row, and (at run end) append the Run history line. Never hand-edit GAUNTLET_QUEUE while
 a run is in progress from outside the orchestrator - that races the run.
 
 ---
@@ -378,7 +378,7 @@ evals as Telegram documents.
 - Sequential batch processing. One eval fully done (run, ship, record, wipe) before
   the next.
 - All sub-agents use the universal output envelope.
-- Sandbox: writes confined to `outbox/` + `STAN_STATE.md`; child processes reaped at
+- Sandbox: writes confined to `outbox/` + `GAUNTLET_QUEUE.md`; child processes reaped at
   run end.
 
 ---
@@ -386,7 +386,7 @@ evals as Telegram documents.
 ## Related
 
 - `commands/eval-pit.md` - the single-eval four-phase flow this orchestrator runs directly in the main session.
-- `STAN_STATE.md` - the framework memory trunk read at run start, updated after each eval.
+- `GAUNTLET_QUEUE.md` - the framework memory trunk read at run start, updated after each eval.
 - `rubric/rubric.md` - the frozen scoring contract.
 - `scripts/send-eval.sh` - per-eval incremental send; auto-selects Telegram-document
   or git-push mode from `config/return-channel.env`.
