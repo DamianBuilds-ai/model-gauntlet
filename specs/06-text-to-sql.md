@@ -15,7 +15,7 @@ prompt_under_test: |
        make about ambiguous wording.
   Output envelope required (schemaVersion, tier, status, tool_budget_used). No em
   dashes (spaced hyphens). No emojis.
-variant_pool: 12
+variant_pool: 9
 corpus: corpus/text-to-sql/
 notes: |
   New task type. Tests schema-grounded SQL generation across a difficulty gradient.

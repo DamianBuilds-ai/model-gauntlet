@@ -14,7 +14,7 @@ prompt_under_test: |
   Do not invent issues that are not in the diff, and do not flag correct code as
   buggy. Output envelope required (schemaVersion, tier, status, tool_budget_used).
   No em dashes (spaced hyphens). No emojis.
-variant_pool: 12
+variant_pool: 9
 corpus: corpus/automated-diff-review/pr.diff
 notes: |
   New task type. The diff contains several planted issues: a SQL-injection via string

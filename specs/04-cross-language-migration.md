@@ -17,7 +17,7 @@ prompt_under_test: |
        case that Python expressed with Optional).
   Output envelope required (schemaVersion, tier, status, tool_budget_used). No em
   dashes (spaced hyphens). No emojis. Do not add features the source does not have.
-variant_pool: 12
+variant_pool: 9
 corpus: corpus/cross-language-migration/source.py
 notes: |
   New task type. Tests porting fidelity plus idiomatic-target judgment. Watch for:

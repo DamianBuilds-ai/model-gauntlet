@@ -16,7 +16,7 @@ prompt_under_test: |
     4. Do NOT invent code, functions, or a dead-letter queue that is not present.
   Output envelope required (schemaVersion, tier, status, tool_budget_used). No em
   dashes (spaced hyphens). No emojis.
-variant_pool: 12
+variant_pool: 9
 corpus: corpus/codebase-qa/
 notes: |
   New task type. Tests multi-file code comprehension with an exact-count sub-question
