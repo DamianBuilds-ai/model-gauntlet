@@ -1,34 +1,30 @@
-# /eval-pit - Prompt Engineering Evaluation Run (v1.4)
+# /eval-pit - Prompt Engineering Evaluation Run (v1.5)
 
-A slash command for Claude Code (or any compatible agent harness) that pits 12 model + effort variants (default; full effort spectrum, no gaps) against each other on the same prompt with sealed identity scoring + Architect-on-Max tally + cost-adjusted recommendation.
+A slash command for Claude Code (or any compatible agent harness) that pits 9 model variants (default; 3 models x 3 reruns each) against each other on the same prompt with sealed identity scoring + Architect-on-Max tally + cost-adjusted recommendation.
 
-**v1.4 changes:**
+**v1.5 changes:**
 
-- Default variant pool expanded from 3-6 to 12 (every model x every effort level, full spectrum, no gaps)
-- Phase 1 dispatch: 12 parallel variant agents (was 6)
-- Sealed labels extended A through L (was A through F)
-- Estimated dispatch count: ~14 per eval (12 variants + 2 Architects), up from 8
-- Time-budget note: fewer evals fit per delegated session (likely 2 instead of 3)
-- Reduced N (3-6 targeting specific question) still allowed per eval-specific spec; v1.4 default is the FULL spectrum for no-gaps comparison
+- Default variant pool changed from 12 (model x effort) to 9 (model-only). Effort is a no-op at dispatch (Claude Code exposes `model: haiku|sonnet|opus` only), so the effort dimension is dropped entirely. The pool is now Haiku x3, Sonnet x3, Opus x3 - the 3 reruns per model are variance runs (mean-of-3).
+- Sealed labels re-lettered A through I (was A through L).
+- Dispatch topology is FLAT: variant sub-agents are dispatched FROM THE MAIN SESSION (depth 1), not from inside a runner sub-agent. Sub-agents cannot spawn sub-agents.
+- Hard halt guard added at every dispatch site: a sub-agent that finds no spawn tool HALTS rather than self-simulating.
+- Reduced N (targeting a specific question, e.g. "just Haiku vs Sonnet") still allowed per eval-specific spec; v1.5 default is the 9-variant model-only pool.
 
-**v1.4 default variant pool (12 - full effort spectrum):**
+**v1.5 default variant pool (9 - model-only, 3 reruns per model):**
 
-| # | Model | Effort | Notes |
-|---|-------|--------|-------|
-| 1 | Haiku 4.5 | low | |
-| 2 | Haiku 4.5 | medium | |
-| 3 | Haiku 4.5 | high | No xhigh/max available per Anthropic spec |
-| 4 | Sonnet 4.6 | low | |
-| 5 | Sonnet 4.6 | medium | |
-| 6 | Sonnet 4.6 | high | |
-| 7 | Sonnet 4.6 | max | |
-| 8 | Opus 4.7 | low | |
-| 9 | Opus 4.7 | medium | |
-| 10 | Opus 4.7 | high | |
-| 11 | Opus 4.7 | xhigh | Unique to Opus 4.7 |
-| 12 | Opus 4.7 | max | |
+| # | Model | Run | Notes |
+|---|-------|-----|-------|
+| 1 | Haiku 4.5 | 1 | |
+| 2 | Haiku 4.5 | 2 | variance run |
+| 3 | Haiku 4.5 | 3 | variance run |
+| 4 | Sonnet 4.6 | 1 | |
+| 5 | Sonnet 4.6 | 2 | variance run |
+| 6 | Sonnet 4.6 | 3 | variance run |
+| 7 | Opus 4.7 | 1 | |
+| 8 | Opus 4.7 | 2 | variance run |
+| 9 | Opus 4.7 | 3 | variance run |
 
-Reduced N (e.g., 3-6 variants targeting specific question) still allowed per eval-specific spec. v1.4 default is the FULL spectrum for no-gaps comparison.
+Effort (low/medium/high/xhigh/max) is NOT a dispatch dimension - the Agent tool pins `model:` only. The 3 reruns per model give a mean-of-3 to damp single-run variance. Reduced N (e.g., a 1-rerun head-to-head of two models) still allowed per eval-specific spec. v1.5 default is the 9-variant model-only pool.
 
 **v1.3 changes (rubric):**
 
@@ -77,7 +73,7 @@ If user invokes bare `/eval-pit`, prompt for:
 - **eval_slug** (required): short kebab-case identifier - e.g., "theme-synthesis", "jd-parse", "hook-draft"
 - **task_category** (required): one of the highest-eval-value categories (multi-file synthesis, pattern detection, judgment call, verbatim capture, external research + synthesize)
 - **prompt_under_test** (required): the verbatim prompt to send to all variants
-- **variants** (optional, defaults to 12-variant full spectrum per v1.4 table above): override with a reduced N (e.g., "Haiku low + Haiku high + Sonnet low + Sonnet high + Opus medium + Opus xhigh") when targeting a specific question
+- **variants** (optional, defaults to 9-variant model-only pool per v1.5 table above - Haiku x3, Sonnet x3, Opus x3): override with a reduced N (e.g., "Haiku x3 + Sonnet x3" to drop Opus, or "Haiku x1 + Sonnet x1" for a quick head-to-head) when targeting a specific question
 - **data_source** (optional): where variants read input from (file paths, date ranges, etc.)
 - **rerun_strategy** (optional): if eval slug already exists, do you want to clone old variants to `.bak-archive/` and rerun fresh? Default yes.
 
@@ -119,7 +115,7 @@ Only after Phase 0 completes successfully, proceed to Phase 1.
 
 ### Phase 1 - Stage + dispatch variants
 
-1. Create `{PROJECT_ROOT}/prompt-evals/{YYYY-MM-DD-eval_slug}/` folder with standard 6 files (`README`, `prompt`, `rubric`, `scores`, `tally`, `variants/key.md`). Variants subdir will host A through L (12 files) by default.
+1. Create `{PROJECT_ROOT}/prompt-evals/{YYYY-MM-DD-eval_slug}/` folder with standard 6 files (`README`, `prompt`, `rubric`, `scores`, `tally`, `variants/key.md`). Variants subdir will host A through I (9 files) by default.
 
 **1c) Stamp corpus_intent + corpus_delivered + corpus_match in eval folder files.**
 
@@ -131,9 +127,11 @@ When creating `prompt-evals/{eval-slug}/` files, frontmatter MUST include:
 
 If post-eval `corpus_match: false`, the tally automatically gets `status: corpus-mismatch` (not just `status: complete`).
 
-2. Generate randomized variant-to-label mapping (A through L, 12 labels by default; A through F if reduced N=6 spec; etc.), seal in `variants/key.md`
+2. Generate randomized variant-to-label mapping (A through I, 9 labels by default - the 3 models x 3 reruns; fewer if a reduced-N spec), seal in `variants/key.md`
 3. Write the per-variant prompt template + assign output paths
-4. Dispatch all 12 variant agents (default) in ONE parallel batch (background). Reduced-N override spawns fewer.
+4. Dispatch the 9 variants (default) in ONE parallel batch (background) FROM THE MAIN SESSION (depth 1). Each variant is pinned with `model: haiku|sonnet|opus` (model is the only dispatch lever; effort is a no-op). Reduced-N override spawns fewer.
+
+   HALT GUARD: if the Agent/Task spawn tool is not available in your context (for example, you are yourself a sub-agent), STOP immediately and report: HALT - variant dispatch requires the main session; sub-agents cannot spawn sub-agents. NEVER generate, role-play, or simulate variant outputs yourself. A halted run is correct; a self-simulated run is invalid data.
 5. Each agent writes to `variants/{LABEL}.md`, sealed identity, no model self-reference, no cost estimates
 6. File-safety: pre-write clone to `.bak-archive/{label}-{timestamp}.md` if rerunning existing
 
@@ -141,34 +139,37 @@ If post-eval `corpus_match: false`, the tally automatically gets `status: corpus
 
 After all variants land:
 
-- Dispatch ONE Architect (Opus 4.7 high effort - "on max" tier)
-- Read `variants/{A through L}.md` WITHOUT opening `key.md` (12 variants default; A through F if reduced N=6)
+- Dispatch ONE Architect FROM THE MAIN SESSION (depth 1), on OPUS (Opus 4.7 - "on max" tier). NOT from inside any runner sub-agent.
+- Read `variants/{A through I}.md` WITHOUT opening `key.md` (9 variants default; fewer if a reduced-N spec)
 - Score 9 dimensions dimension-by-dimension across ALL variants (then apply Instruction-following PASS/FAIL gate)
 - Write to `scores.md` per template with qualitative observation per variant (mandatory, written LAST)
 - Length disclosure: word counts captured BEFORE scoring
+
+HALT GUARD: if the Agent/Task spawn tool is not available in your context (for example, you are yourself a sub-agent), STOP immediately and report: HALT - variant dispatch requires the main session; sub-agents cannot spawn sub-agents. NEVER generate, role-play, or simulate variant outputs yourself. A halted run is correct; a self-simulated run is invalid data.
 
 ### Phase 3 - Architect Pass 2 reveal + Pass 3 cost-adjust
 
 After Pass 1:
 
-- Dispatch SECOND Architect (Opus 4.7 high)
+- Dispatch SECOND Architect FROM THE MAIN SESSION (depth 1), on OPUS (Opus 4.7). NOT from inside any runner sub-agent.
 - Read `scores.md` + open `key.md`
+
+HALT GUARD: if the Agent/Task spawn tool is not available in your context (for example, you are yourself a sub-agent), STOP immediately and report: HALT - variant dispatch requires the main session; sub-agents cannot spawn sub-agents. NEVER generate, role-play, or simulate variant outputs yourself. A halted run is correct; a self-simulated run is invalid data.
 - Apply v1.3 rubric: 9 scored dimensions + Instruction-following binary PASS/FAIL gate
   - If any variant fails Instruction-following gate, ELIMINATE from contention (no weighted score)
   - If any variant scores 1 on Correctness, Hallucination, or marked FAIL on Instruction-following = hard-fail eliminated
 - Compute weighted totals on remaining variants: `sum(score * weight) / sum(weights scored)`
 
-**Within-family tiebreaker BEFORE cross-family cost-override:**
+**Within-family handling (the 3 reruns) BEFORE cross-family cost-override:**
 
-- If 2+ variants of SAME MODEL FAMILY (e.g., Haiku low + Haiku high) score within 0.3 weighted total:
-  1. Cheaper effort wins (within same model)
-  2. If tied AND same effort: shorter output wins (verbosity penalty)
-  3. If still tied: random with note
+- The 3 reruns of the same model are variance runs. Take the MEAN of the 3 weighted totals as that model's score (mean-of-3). This is the within-family resolution now that the pool is model-only (no effort dimension to tie-break).
+- If 2+ DIFFERENT models score within 0.3 weighted total of each other, that is a cross-family tie - resolve it via the cost-override table below (cheaper model wins in the tie zone). If still tied: shorter output wins (verbosity penalty); if still tied, random with note.
 
 **N >= 3 protocol for bottom-quartile:**
 
+- The 9-variant default already runs each model x3, so the mean-of-3 IS the N=3 evidence for every model. For a REDUCED-N spec (fewer than 3 reruns of a model), if that model lands in the bottom quartile, dispatch 2 MORE runs of it to reach N=3.
 - Identify bottom-quartile variants (lowest 25% by weighted total or eliminated by hard-fail)
-- Dispatch 2 MORE runs of each bottom-quartile variant (same model + effort, fresh corpus context)
+- Dispatch the additional runs of each bottom-quartile model (same model, fresh corpus context) only if it has not already reached N=3
 - If all 3 runs show same failure pattern -> confirmed model-specific weakness
 - If runs vary widely -> sample variance, original score upgraded to "noisy" flag
 - Update tally with N=3 finding
@@ -202,8 +203,8 @@ PASTE THIS BACK INTO YOUR ORIGIN CHAT:
 # Eval {slug} - results back from delegated session
 
 ## Headline
-- Quality winner: {model+effort} (weighted total {X.X}/5.0)
-- Practical winner: {model+effort} ({cost-override rule fired OR "same as quality"})
+- Quality winner: {model} (weighted total {X.X}/5.0)
+- Practical winner: {model} ({cost-override rule fired OR "same as quality"})
 
 ## Per-dimension highlights
 - {5-7 bullets}
@@ -268,30 +269,28 @@ After outputting return prompt: "Eval {slug} complete. Return prompt above. Copy
 
 If you're on a flat-rate Claude Code subscription (e.g., Max tier), per-call cost is irrelevant during eval design. Quality + signal matters. Full variant slate + Architect passes is the budget; no shrinkage.
 
-If you're on metered API access, plan for ~14 core dispatches per eval. Reduced-N (3-6 variants) cuts that to ~5-8. Use reduced-N when targeting a specific question; reserve full-spectrum runs for new task categories or major model releases.
+If you're on metered API access, plan for ~11 core dispatches per eval. Reduced-N (e.g., 2 models x 1 rerun) cuts that to ~4-6. Use reduced-N when targeting a specific question; reserve the full 9-variant pool for new task categories or major model releases.
 
 ## Total expected agent dispatches per eval
 
-- 3-4 Stage 1 parallel reads (optional but recommended)
-- 12 variant agents (parallel background, v1.4 default; reduced N=3-6 still allowed per eval-specific spec)
-- 1 Architect Pass 1
-- 1 Architect Pass 2/3
+- 3-4 Stage 1 parallel reads (optional but recommended), from the main session
+- 9 variant agents (parallel background, depth 1, dispatched from the MAIN SESSION; v1.5 default = 3 models x 3 reruns; reduced N still allowed per eval-specific spec)
+- 1 Architect Pass 1 (Opus), dispatched from the main session
+- 1 Architect Pass 2/3 (Opus), dispatched from the main session
 - 1 Builder updating methodology Scoreboard + Index
 - 1 optional Distiller compressing variant outputs for chat hygiene before Phase 4
 
-= ~14 core dispatches (12 variants + 2 Architects) plus ~3-6 stage / builder / distiller dispatches per eval
+= ~11 core dispatches (9 variants + 2 Architects) plus ~3-6 stage / builder / distiller dispatches per eval
 
-**Time-budget note (v1.4):** with 12 variants instead of 6, the dispatch fan-out is wider. Expect fewer evals to fit per delegated session (likely 2 instead of 3). Plan delegated-session scope accordingly.
+**Topology note (v1.5):** every dispatch above happens at depth 1 from the main orchestrator session. Sub-agents cannot spawn sub-agents, so NO dispatch is nested inside a runner sub-agent. If a context that should be dispatching finds no spawn tool, it HALTS (see the halt guard at each Phase 1/2/3 dispatch site) - it never self-simulates the variants.
 
 ---
 
-## Known limitations (v1.4)
+## Known limitations (v1.5)
 
-**1. Effort parameter NOT enforced.** Claude Code's Agent tool exposes `model: haiku|sonnet|opus` only. Effort levels (low/medium/high/xhigh/max) are RECORDED in variant labels for analysis but NOT enforced at dispatch. Variant pairs at same model + different effort labels may produce functionally identical outputs. Document the effort label as an aspiration; treat results as if only model was the differentiator.
+**1. Effort is NOT a dispatch dimension.** Claude Code's Agent tool exposes `model: haiku|sonnet|opus` only - effort (low/medium/high/xhigh/max) cannot be pinned at dispatch. v1.5 therefore drops the effort dimension entirely: the pool is model-only (Haiku x3, Sonnet x3, Opus x3). Earlier versions carried effort labels as an aspiration, but same-model/different-effort variants produced functionally identical outputs, so the label added noise without signal. Model is the differentiator.
 
-**1a. Haiku effort ceiling (v1.4).** Haiku 4.5 tops out at `high` per Anthropic spec - no `xhigh` or `max` available. The 12-variant default pool reflects this (Haiku slots = low/medium/high only). Sonnet 4.6 goes through `max`. Opus 4.7 is the only model with `xhigh` available, plus `max`.
-
-**2. N=1 per variant baseline.** Each eval runs each variant once by default. v1.3 adds N >= 3 protocol for bottom-quartile variants (re-run 2x to confirm failure). Top variants still N=1 unless you manually re-run. Variance baseline protocol (separate from N >= 3) recommended once per major task category to establish noise floor.
+**2. N=3 per model by default.** The 9-variant default runs each model x3 (the 3 reruns are variance runs; the per-model score is the mean-of-3). This damps single-run variance for every model, not just bottom-quartile ones. A reduced-N spec (fewer reruns) reverts toward N=1 and re-enables the bottom-quartile re-run protocol. Variance baseline protocol (separate from the reruns) still recommended once per major task category to establish the noise floor.
 
 **3. Task generalization.** Each eval's findings apply to that task. Multi-file synthesis tells you nothing definitive about pattern detection or judgment call. Cross-task inference requires multiple evals across task categories.
 
@@ -321,3 +320,4 @@ If you're on metered API access, plan for ~14 core dispatches per eval. Reduced-
 - **v1.2** (2026-05-19 PM): Stage proposals default + file-safety clones at Phase 0 + effort-param limitation documented + data-source validation + NO auto-approve
 - **v1.3** (2026-05-19 PM): 9-dim rubric + binary Instruction-following gate + Source transparency + Judgment split (Helpfulness / Discipline) + corpus integrity (Phase 0 step d + frontmatter) + within-family tiebreaker + N >= 3 bottom-quartile protocol. Source: eval #1 findings.
 - **v1.4** (2026-05-19 PM): Default variant pool expanded from 3-6 to 12 (every model x every effort level, full spectrum, no gaps). Sealed labels A through L. Estimated 14 core dispatches per eval (12 variants + 2 Architects). Haiku effort ceiling documented (high; no xhigh/max). Time-budget note: ~2 evals per delegated session (down from ~3).
+- **v1.5** (2026-05-22): Pool changed from 12 (model x effort) to 9 (model-only: Haiku x3, Sonnet x3, Opus x3) - effort is a no-op at dispatch, so the dimension is dropped and the 3 reruns become variance runs (mean-of-3). Sealed labels re-lettered A through I. Dispatch topology made explicitly FLAT: variants + both Architects dispatched FROM THE MAIN SESSION at depth 1 (no intermediate runner sub-agent). Hard halt guard added at every dispatch site (variants + both Architects) - a sub-agent that finds no spawn tool HALTS rather than self-simulating. Consolidator/Architect passes stay on OPUS. ~11 core dispatches per eval (9 variants + 2 Architects).

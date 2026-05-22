@@ -6,30 +6,42 @@ of evals one at a time, ships each eval's result the moment it finishes, updates
 the framework's memory, and prints a branch name for Stan to paste back. No chats
 to open or close, no per-eval lifecycle, no internals to understand.
 
-This command WRAPS the single-eval `/eval-pit` four-phase flow: each eval in the
-batch is run by ONE eval sub-agent that executes `/eval-pit` internally in its own
-context window (the master-bot-calling-a-tool pattern). The orchestrator never
-re-ingests sub-agent context - it only confirms each result file landed, ships it,
-and moves on.
+This command WRAPS the single-eval `/eval-pit` four-phase flow: the MAIN
+orchestrator session runs each eval's `/eval-pit` flow DIRECTLY in its own context.
+The main session is the only place the Agent/Task spawn tool exists, so the main
+session itself dispatches the variant sub-agents (depth 1) and, after collecting
+their outputs, dispatches ONE consolidator sub-agent (Opus) to score and tally.
+There is NO intermediate eval sub-agent. Sub-agents cannot spawn sub-agents, so an
+eval sub-agent could never fan out the variants - it would silently self-simulate
+them and produce invalid data. The topology is FLAT: main session -> variant
+sub-agents (depth 1) -> consolidator sub-agent (depth 1).
+
+Evals in a batch run SEQUENTIALLY in the main session (one eval fully finished -
+variants dispatched, consolidated, tally shipped, memory updated - before the next
+eval starts, to keep peak context low). The variant fan-out WITHIN a single eval is
+parallel at depth 1.
 
 **Consumer:** Stan (or any non-technical operator) on a clone of `model-gauntlet`.
-**Wraps:** `commands/eval-pit.md` (the single-eval runner), invoked as a sub-agent.
+**Wraps:** `commands/eval-pit.md` (the single-eval four-phase flow), executed
+directly by the main orchestrator session - NOT delegated to an eval sub-agent.
 
 ---
 
 ## Sandbox contract (read first - this is a hard requirement)
 
-The orchestrator AND every sub-agent it spawns write ONLY to two locations:
+The orchestrator AND every sub-agent it spawns (variant sub-agents + the
+consolidator sub-agent) write ONLY to two locations:
 
 - `outbox/` (transient per-eval working files - tally + scores)
-- `STAN_STATE.md` (the framework memory trunk)
+- `STAN_STATE.md` (the framework memory trunk, written by the orchestrator only)
 
 Nothing else is read or written outside this repo. No access to Stan's other files,
-no permanent files, no home directory, no system paths. Every eval sub-agent is
-spawned with an explicit single-write-path constraint (`outbox/NN-slug.tally.md`
-and `outbox/NN-slug.scores.md` ONLY). Any write attempt outside `outbox/` is a
-scope-exceeded signal, not an action. Variant scratch files and the sealed key live
-inside each sub-agent's own scratch and are NEVER copied to outbox.
+no permanent files, no home directory, no system paths. The consolidator sub-agent
+is spawned with an explicit single-write-path constraint (`outbox/NN-slug.tally.md`
+and `outbox/NN-slug.scores.md` ONLY). Variant sub-agents keep their raw output in
+their own scratch only. Any write attempt outside `outbox/` is a scope-exceeded
+signal, not an action. Variant scratch files and the sealed key live inside the
+sub-agents' own scratch and are NEVER copied to outbox.
 
 Honest scope of this guarantee: it is enforced by INSTRUCTION (every sub-agent is
 told its single write path), NOT by an operating-system boundary. There is no
@@ -124,15 +136,34 @@ touch it. This is intentional.)
 
 ### 6. For each eval in the batch, SEQUENTIALLY
 
-Process the batch one eval at a time. Do NOT parallelise - sequential keeps peak
-context low, makes an interrupted run leave a clean partial state, and ships each
-result the instant it is ready. For each eval:
+Process the batch one eval at a time. Do NOT parallelise the evals - sequential
+keeps peak context low, makes an interrupted run leave a clean partial state, and
+ships each result the instant it is ready. (The variant fan-out WITHIN a single
+eval is parallel at depth 1 - see step 6a. Only the eval-to-eval loop is
+sequential.) For each eval:
 
-**a. Dispatch ONE eval sub-agent.** It runs the `/eval-pit` four-phase flow
-internally: stage the 12-variant pool (or the spec's reduced-N override), Pass 1
-sealed scoring against `rubric/rubric.md`, Pass 2 reveal + cost-adjust, write the
-tally. Use the spawn-prompt template below. The sub-agent is HARD-CONSTRAINED to
-write ONLY `outbox/NN-slug.tally.md` and `outbox/NN-slug.scores.md`.
+**a. Run the `/eval-pit` flow DIRECTLY in the main session.** Do NOT delegate the
+eval to an intermediate sub-agent - the main session is the only context where the
+spawn tool exists, and a sub-agent cannot spawn the variant sub-agents. The main
+session itself:
+  1. Stages the variant pool (9 variants: 3 models x 3 reruns; or the spec's
+     reduced-N override) and seals the label->model map in the main session's own
+     scratch.
+  2. Dispatches the variant pool from the main session (depth 1), each variant
+     pinned with `model: haiku|sonnet|opus`, in ONE parallel background batch.
+     Process the eval-to-eval loop sequentially, but the variants of THIS eval fan
+     out in parallel.
+  3. After all variants land, dispatches ONE consolidator sub-agent (Opus) from the
+     main session (depth 1) to run Pass 1 sealed scoring against `rubric/rubric.md`,
+     Pass 2 reveal + cost-adjust, and write the tally. The consolidator is
+     HARD-CONSTRAINED to write ONLY `outbox/NN-slug.tally.md` and
+     `outbox/NN-slug.scores.md`. Use the consolidator spawn-prompt template below.
+
+HALT GUARD: if the Agent/Task spawn tool is not available in your context (for
+example, you are yourself a sub-agent), STOP immediately and report: HALT - variant
+dispatch requires the main session; sub-agents cannot spawn sub-agents. NEVER
+generate, role-play, or simulate variant outputs yourself. A halted run is correct;
+a self-simulated run is invalid data.
 
 **b. Ship that eval immediately.** Once the tally has landed in outbox:
 ```
@@ -201,57 +232,97 @@ interruption hits.
 
 ---
 
-## Eval sub-agent spawn-prompt template
+## Variant sub-agent spawn-prompt template
 
-Dispatch each eval sub-agent with a prompt of this shape (fill the bracketed
-fields from the spec). State the write constraint explicitly - it is the core
-sandbox guarantee:
+The MAIN session dispatches each of the 9 variants (3 models x 3 reruns) at depth 1
+with a prompt of this shape (fill the bracketed fields from the spec). Each variant
+is pinned with `model: haiku|sonnet|opus` - the model is the differentiator (effort
+is a no-op at dispatch). Variants run sealed: no model self-reference, no cost
+estimates. The main session holds the label->model map in its own scratch.
 
 ```
-You are an eval sub-agent running ONE prompt-eval end to end using the
-model-gauntlet /eval-pit four-phase flow. You run in your own context window.
+You are a sealed variant in a model-gauntlet eval. You produce ONE answer to the
+prompt below, with NO awareness of which model you are and NO self-reference.
 
 Eval: NN-slug = [e.g. 01-verbatim-capture]
-Spec file: specs/[slug].md   (read it for task_category, prompt_under_test,
-                               variant pool, corpus path, corpus_intent)
+Sealed label: [e.g. A]   (your output is identified only by this label)
+Prompt under test (verbatim - this is the ENTIRE task):
+[paste prompt_under_test from specs/[slug].md]
+Corpus / data source: [corpus path from the spec]
+
+Rules:
+- Answer the prompt as written. Do NOT mention your model, effort, or cost.
+- Write your answer to YOUR OWN scratch only (the main session collects it). Do NOT
+  write to outbox/, STAN_STATE.md, or any repo file.
+- Universal output envelope (schemaVersion: 1, tier, status, tool_budget_used).
+- NO em dashes (spaced hyphens), NO emojis. Sequential processing if multi-item.
+```
+
+The main session repeats this dispatch once per sealed label (A through I for the
+9-variant default), pinning the correct `model:` per the sealed map, in ONE parallel
+background batch.
+
+HALT GUARD: if the Agent/Task spawn tool is not available in your context (for
+example, you are yourself a sub-agent), STOP immediately and report: HALT - variant
+dispatch requires the main session; sub-agents cannot spawn sub-agents. NEVER
+generate, role-play, or simulate variant outputs yourself. A halted run is correct;
+a self-simulated run is invalid data.
+
+---
+
+## Consolidator sub-agent spawn-prompt template
+
+After all variants land, the MAIN session dispatches ONE consolidator sub-agent
+(Opus) at depth 1 to score and tally. State the write constraint explicitly - it is
+the core sandbox guarantee:
+
+```
+You are the consolidator for ONE model-gauntlet eval. You score the variant outputs
+and write the tally. You run in your own context window.
+
+Eval: NN-slug = [e.g. 01-verbatim-capture]
+Variant outputs: [the main session provides the sealed variant answers, labelled
+                  A through I, AND the sealed label->model key]
 Rubric: rubric/rubric.md   (the FROZEN scoring contract - score against this)
 
-Run the four phases internally:
-- Phase 0: validate the corpus path + corpus_intent vs delivered (HALT-signal if mismatch).
-- Phase 1: stage the variant pool (12 by default, or the spec's reduced N), assign
-  sealed labels A through L, seal the model->label map in YOUR OWN scratch (never outbox).
-  Dispatch the variant runs.
-- Phase 2: Architect Pass 1 sealed scoring - 9 dimensions dimension-by-dimension +
-  the binary instruction-following gate, WITHOUT opening the sealed key. Length
-  disclosure before scoring.
-- Phase 3: Architect Pass 2/3 - reveal the key, compute weighted totals, apply the
-  within-family tiebreaker then the cross-family cost-override table from rubric/rubric.md,
-  write the tally.
+Run two sealed passes:
+- Pass 1: sealed scoring - score the 9 dimensions dimension-by-dimension across ALL
+  variants + the binary instruction-following gate, WITHOUT looking at the
+  label->model key. Length disclosure (word counts) BEFORE scoring.
+- Pass 2/3: reveal the key, compute weighted totals, apply the within-family
+  tiebreaker then the cross-family cost-override table from rubric/rubric.md, write
+  the tally.
 
 HARD WRITE CONSTRAINT (sandbox - non-negotiable):
 - You may write ONLY these two files:
     outbox/NN-slug.tally.md     (the headline result + the two winners)
     outbox/NN-slug.scores.md    (the sealed-scoring audit trail)
-- Variant raw outputs and the sealed key stay in YOUR scratch and are NOT copied to outbox.
 - Any attempt to write ANY other path (home dir, system paths, other repo files,
   STAN_STATE.md) = STOP and return scope-exceeded. The orchestrator owns STAN_STATE,
   not you.
 
 The tally headline MUST contain two clearly labelled lines the send script can grep:
-  Quality winner: <model+effort> (weighted total X.X/5.0)
-  Practical winner: <model+effort> (<cost-override rule fired OR "same as quality">)
+  Quality winner: <model> (weighted total X.X/5.0)
+  Practical winner: <model> (<cost-override rule fired OR "same as quality">)
 
 Constraints: NO em dashes (spaced hyphens), NO emojis, universal output envelope
 (schemaVersion: 1, tier, status, tool_budget_used), sequential processing, sealed
-identity discipline. Process variants one at a time within yourself; do not batch.
+identity discipline (do not open the key until Pass 2).
 ```
+
+HALT GUARD: if the Agent/Task spawn tool is not available in your context (for
+example, you are yourself a sub-agent), STOP immediately and report: HALT - variant
+dispatch requires the main session; sub-agents cannot spawn sub-agents. NEVER
+generate, role-play, or simulate variant outputs yourself. A halted run is correct;
+a self-simulated run is invalid data.
 
 ---
 
 ## Editing STAN_STATE during a run
 
 The orchestrator (this command, in the main run context) is the ONLY writer of
-STAN_STATE.md during a run. Eval sub-agents never touch it. After each eval ships,
+STAN_STATE.md during a run. Variant and consolidator sub-agents never touch it.
+After each eval ships,
 update three things: flip the slug to `done` in the Eval queue, add the Completed
 row, and (at run end) append the Run history line. Never hand-edit STAN_STATE while
 a run is in progress from outside the orchestrator - that races the run.
@@ -314,7 +385,7 @@ evals as Telegram documents.
 
 ## Related
 
-- `commands/eval-pit.md` - the single-eval four-phase runner this orchestrator wraps.
+- `commands/eval-pit.md` - the single-eval four-phase flow this orchestrator runs directly in the main session.
 - `STAN_STATE.md` - the framework memory trunk read at run start, updated after each eval.
 - `rubric/rubric.md` - the frozen scoring contract.
 - `scripts/send-eval.sh` - per-eval incremental send; auto-selects Telegram-document
