@@ -1,0 +1,417 @@
+{
+  "category_totals": {
+    "infrastructure": 11769359,
+    "personnel": 13355167,
+    "marketing": 10208317,
+    "legal": 6511690
+  },
+  "figure_count_per_category": {
+    "infrastructure": 22,
+    "personnel": 26,
+    "marketing": 18,
+    "legal": 14
+  },
+  "grand_total": 41844533,
+  "figures": [
+    {
+      "idx": 1,
+      "category": "marketing",
+      "dollars": 648859
+    },
+    {
+      "idx": 2,
+      "category": "marketing",
+      "dollars": 994986
+    },
+    {
+      "idx": 3,
+      "category": "infrastructure",
+      "dollars": 704784
+    },
+    {
+      "idx": 4,
+      "category": "infrastructure",
+      "dollars": 28302
+    },
+    {
+      "idx": 5,
+      "category": "personnel",
+      "dollars": 836071
+    },
+    {
+      "idx": 6,
+      "category": "infrastructure",
+      "dollars": 145008
+    },
+    {
+      "idx": 7,
+      "category": "infrastructure",
+      "dollars": 614526
+    },
+    {
+      "idx": 8,
+      "category": "personnel",
+      "dollars": 8654
+    },
+    {
+      "idx": 9,
+      "category": "infrastructure",
+      "dollars": 162816
+    },
+    {
+      "idx": 10,
+      "category": "personnel",
+      "dollars": 403056
+    },
+    {
+      "idx": 11,
+      "category": "personnel",
+      "dollars": 356497
+    },
+    {
+      "idx": 12,
+      "category": "infrastructure",
+      "dollars": 131126
+    },
+    {
+      "idx": 13,
+      "category": "infrastructure",
+      "dollars": 668721
+    },
+    {
+      "idx": 14,
+      "category": "personnel",
+      "dollars": 597430
+    },
+    {
+      "idx": 15,
+      "category": "personnel",
+      "dollars": 826395
+    },
+    {
+      "idx": 16,
+      "category": "personnel",
+      "dollars": 638389
+    },
+    {
+      "idx": 17,
+      "category": "marketing",
+      "dollars": 514545
+    },
+    {
+      "idx": 18,
+      "category": "infrastructure",
+      "dollars": 977736
+    },
+    {
+      "idx": 19,
+      "category": "personnel",
+      "dollars": 871308
+    },
+    {
+      "idx": 20,
+      "category": "legal",
+      "dollars": 925008
+    },
+    {
+      "idx": 21,
+      "category": "personnel",
+      "dollars": 499688
+    },
+    {
+      "idx": 22,
+      "category": "personnel",
+      "dollars": 251066
+    },
+    {
+      "idx": 23,
+      "category": "legal",
+      "dollars": 51271
+    },
+    {
+      "idx": 24,
+      "category": "legal",
+      "dollars": 7481
+    },
+    {
+      "idx": 25,
+      "category": "legal",
+      "dollars": 849117
+    },
+    {
+      "idx": 26,
+      "category": "personnel",
+      "dollars": 525199
+    },
+    {
+      "idx": 27,
+      "category": "infrastructure",
+      "dollars": 668761
+    },
+    {
+      "idx": 28,
+      "category": "infrastructure",
+      "dollars": 791846
+    },
+    {
+      "idx": 29,
+      "category": "personnel",
+      "dollars": 603463
+    },
+    {
+      "idx": 30,
+      "category": "marketing",
+      "dollars": 285530
+    },
+    {
+      "idx": 31,
+      "category": "marketing",
+      "dollars": 642932
+    },
+    {
+      "idx": 32,
+      "category": "infrastructure",
+      "dollars": 420143
+    },
+    {
+      "idx": 33,
+      "category": "marketing",
+      "dollars": 689269
+    },
+    {
+      "idx": 34,
+      "category": "marketing",
+      "dollars": 141549
+    },
+    {
+      "idx": 35,
+      "category": "personnel",
+      "dollars": 388982
+    },
+    {
+      "idx": 36,
+      "category": "marketing",
+      "dollars": 855177
+    },
+    {
+      "idx": 37,
+      "category": "marketing",
+      "dollars": 985881
+    },
+    {
+      "idx": 38,
+      "category": "marketing",
+      "dollars": 927968
+    },
+    {
+      "idx": 39,
+      "category": "infrastructure",
+      "dollars": 885999
+    },
+    {
+      "idx": 40,
+      "category": "legal",
+      "dollars": 295953
+    },
+    {
+      "idx": 41,
+      "category": "personnel",
+      "dollars": 673604
+    },
+    {
+      "idx": 42,
+      "category": "personnel",
+      "dollars": 656544
+    },
+    {
+      "idx": 43,
+      "category": "marketing",
+      "dollars": 945392
+    },
+    {
+      "idx": 44,
+      "category": "marketing",
+      "dollars": 12001
+    },
+    {
+      "idx": 45,
+      "category": "personnel",
+      "dollars": 615251
+    },
+    {
+      "idx": 46,
+      "category": "legal",
+      "dollars": 925910
+    },
+    {
+      "idx": 47,
+      "category": "legal",
+      "dollars": 450018
+    },
+    {
+      "idx": 48,
+      "category": "infrastructure",
+      "dollars": 205874
+    },
+    {
+      "idx": 49,
+      "category": "infrastructure",
+      "dollars": 702852
+    },
+    {
+      "idx": 50,
+      "category": "infrastructure",
+      "dollars": 407591
+    },
+    {
+      "idx": 51,
+      "category": "personnel",
+      "dollars": 703474
+    },
+    {
+      "idx": 52,
+      "category": "marketing",
+      "dollars": 669423
+    },
+    {
+      "idx": 53,
+      "category": "legal",
+      "dollars": 351127
+    },
+    {
+      "idx": 54,
+      "category": "legal",
+      "dollars": 781561
+    },
+    {
+      "idx": 55,
+      "category": "infrastructure",
+      "dollars": 900482
+    },
+    {
+      "idx": 56,
+      "category": "legal",
+      "dollars": 416002
+    },
+    {
+      "idx": 57,
+      "category": "marketing",
+      "dollars": 128388
+    },
+    {
+      "idx": 58,
+      "category": "legal",
+      "dollars": 247599
+    },
+    {
+      "idx": 59,
+      "category": "infrastructure",
+      "dollars": 795948
+    },
+    {
+      "idx": 60,
+      "category": "legal",
+      "dollars": 93822
+    },
+    {
+      "idx": 61,
+      "category": "marketing",
+      "dollars": 157764
+    },
+    {
+      "idx": 62,
+      "category": "marketing",
+      "dollars": 524245
+    },
+    {
+      "idx": 63,
+      "category": "infrastructure",
+      "dollars": 711671
+    },
+    {
+      "idx": 64,
+      "category": "infrastructure",
+      "dollars": 728509
+    },
+    {
+      "idx": 65,
+      "category": "personnel",
+      "dollars": 786067
+    },
+    {
+      "idx": 66,
+      "category": "legal",
+      "dollars": 820408
+    },
+    {
+      "idx": 67,
+      "category": "infrastructure",
+      "dollars": 621883
+    },
+    {
+      "idx": 68,
+      "category": "infrastructure",
+      "dollars": 262407
+    },
+    {
+      "idx": 69,
+      "category": "personnel",
+      "dollars": 547935
+    },
+    {
+      "idx": 70,
+      "category": "personnel",
+      "dollars": 329882
+    },
+    {
+      "idx": 71,
+      "category": "personnel",
+      "dollars": 60359
+    },
+    {
+      "idx": 72,
+      "category": "personnel",
+      "dollars": 932513
+    },
+    {
+      "idx": 73,
+      "category": "personnel",
+      "dollars": 467990
+    },
+    {
+      "idx": 74,
+      "category": "personnel",
+      "dollars": 32471
+    },
+    {
+      "idx": 75,
+      "category": "infrastructure",
+      "dollars": 232374
+    },
+    {
+      "idx": 76,
+      "category": "marketing",
+      "dollars": 793773
+    },
+    {
+      "idx": 77,
+      "category": "legal",
+      "dollars": 296413
+    },
+    {
+      "idx": 78,
+      "category": "personnel",
+      "dollars": 329633
+    },
+    {
+      "idx": 79,
+      "category": "personnel",
+      "dollars": 413246
+    },
+    {
+      "idx": 80,
+      "category": "marketing",
+      "dollars": 290635
+    }
+  ]
+}

@@ -129,6 +129,26 @@ One row per eval the framework can run. `status` is one of: `queued` (not yet ru
 | 98 | 98-rerun-eval37-consistency-n5 | cross-reference-completeness-consistency | corpus/cross-reference-completeness/ | queued (pool 15) |
 | 99 | 99-rerun-eval52-sonnet-fail-n5 | numerical-accuracy-at-scale | corpus/numerical-accuracy-at-scale/ | queued (pool 15) |
 | 100 | 100-rerun-eval22-opus-niche-n5 | cross-reference-completeness | corpus/cross-reference-completeness/ | queued (pool 15) |
+| 101 | 101-heterogeneous-precision-8 | heterogeneous-precision-battery | corpus/heterogeneous-precision-8/ | queued (pool 15) |
+| 102 | 102-heterogeneous-precision-12 | heterogeneous-precision-battery | corpus/heterogeneous-precision-12/ | queued (pool 15) |
+| 103 | 103-heterogeneous-precision-interdependent | heterogeneous-precision-battery | corpus/heterogeneous-precision-interdependent/ | queued (pool 15) |
+| 104 | 104-heterogeneous-precision-mixed-domain | heterogeneous-precision-battery | corpus/heterogeneous-precision-mixed-domain/ | queued (pool 15) |
+| 105 | 105-heterogeneous-precision-with-distractor-load | heterogeneous-precision-battery | corpus/heterogeneous-precision-with-distractor-load/ | queued (pool 15) |
+| 106 | 106-correction-without-regression | correction-without-regression | corpus/correction-without-regression/ | queued (pool 15) |
+| 107 | 107-precision-completeness-tradeoff | precision-completeness-tradeoff | corpus/precision-completeness-tradeoff/ | queued (pool 15) |
+| 108 | 108-self-consistency-under-rephrase | self-consistency-under-rephrase | corpus/self-consistency-under-rephrase/ | queued (pool 15) |
+| 109 | 109-rerun-eval53-ambiguous-judgment-n5 | ambiguous-spec-implementation | corpus/ambiguous-spec-implementation/ | queued (pool 15) |
+| 110 | 110-long-task-quality-decay | long-task-quality-decay | corpus/long-task-quality-decay/ | queued |
+| 111 | 111-heterogeneous-with-judgment | heterogeneous-precision-judgment | corpus/heterogeneous-with-judgment/ | queued (pool 15) |
+| 112 | 112-cost-adjusted-routing-decision | routing-meta-eval | corpus/cost-adjusted-routing-decision/ | queued |
+| 113 | 113-context-mega-multi-doc-crossref | context-mega-multi-doc-crossref | corpus/context-mega-multi-doc-crossref/ | queued |
+| 114 | 114-context-policy-compliance-audit | context-policy-compliance-audit | corpus/context-policy-compliance-audit/ | queued |
+| 115 | 115-context-mega-log-needle | context-mega-log-needle | corpus/context-mega-log-needle/ | queued |
+| 116 | 116-rerun-eval24-overengineering-n5 | high-stakes-zero-error | corpus/high-stakes-zero-error/ | queued (pool 15) |
+| 117 | 117-rerun-eval33-length-discipline-n5 | multi-doc-consolidation | corpus/heavy-multi-doc-consolidation/ | queued (pool 15) |
+| 118 | 118-rerun-eval56-prompt-injection-leak-n5 | prompt-injection-resistance | corpus/prompt-injection-resistance/ | queued (pool 15) |
+| 119 | 119-agentic-self-correction | agentic-self-correction | corpus/agentic-self-correction/ | queued |
+| 120 | 120-context-arithmetic-at-scale | context-arithmetic-at-scale | corpus/context-arithmetic-at-scale/ | queued |
 
 <!-- Each row points at a spec file in specs/NN-slug.md and a corpus path under
      corpus/. Minimum batch size for a run is 5; the rows below are the live queue
@@ -230,6 +250,30 @@ empty it falls back to the first 5 `queued` rows in the Eval queue.
 60. `98-rerun-eval37-consistency-n5` (re-run eval 37 contested consistency result at N=5)
 61. `99-rerun-eval52-sonnet-fail-n5` (re-run eval 52 Sonnet sealed-label fail at N=5)
 62. `100-rerun-eval22-opus-niche-n5` (re-run eval 22 strongest Opus-niche win at N=5)
+
+**Batch 6 - Chat A (101-110, heterogeneous-precision + correction/consistency mix, variant_pool 15 except 110):**
+63. `101-heterogeneous-precision-8` (8 independent precision items in one prompt, all-or-nothing)
+64. `102-heterogeneous-precision-12` (12 independent precision items - Opus headline probe)
+65. `103-heterogeneous-precision-interdependent` (12 items where later answers depend on earlier ones)
+66. `104-heterogeneous-precision-mixed-domain` (12 items across code + docs + numbers + policy)
+67. `105-heterogeneous-precision-with-distractor-load` (12 real items hidden in distractor content)
+68. `106-correction-without-regression` (apply the fix and break nothing else that was already right)
+69. `107-precision-completeness-tradeoff` (cover everything required without inventing extras)
+70. `108-self-consistency-under-rephrase` (same answer when the same question is reworded)
+71. `109-rerun-eval53-ambiguous-judgment-n5` (re-run eval 53 ambiguous-spec implementation at N=5)
+72. `110-long-task-quality-decay` (quality holds from item 1 through item 30, no late-task drift)
+
+**Batch 6 - Chat B (111-120, judgment + routing + context-mega trio + re-runs + agentic, variant_pool 9 except noted):**
+73. `111-heterogeneous-with-judgment` (precision battery where some items require a judgment call, pool 15)
+74. `112-cost-adjusted-routing-decision` (pick the right tier given cost + quality + latency tradeoffs)
+75. `113-context-mega-multi-doc-crossref` (find the cross-doc link buried in a >200k-token corpus)
+76. `114-context-policy-compliance-audit` (catch every policy violation in a >200k-token policy + log set)
+77. `115-context-mega-log-needle` (single needle in a >200k-token log, no fabrication)
+78. `116-rerun-eval24-overengineering-n5` (re-run eval 24 high-stakes-zero-error at N=5, pool 15)
+79. `117-rerun-eval33-length-discipline-n5` (re-run eval 33 heavy multi-doc consolidation at N=5, pool 15)
+80. `118-rerun-eval56-prompt-injection-leak-n5` (re-run eval 56 prompt-injection-resistance at N=5, pool 15)
+81. `119-agentic-self-correction` (detect own mistake mid-task and recover, no doubling down)
+82. `120-context-arithmetic-at-scale` (sum/count across a >200k-token corpus, exact numerical answer)
 
 ---
 
